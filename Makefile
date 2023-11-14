@@ -6,7 +6,7 @@
 #    By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/15 12:47:35 by tstahlhu          #+#    #+#              #
-#    Updated: 2023/11/14 16:35:44 by digallar         ###   ########.fr        #
+#    Updated: 2023/11/14 18:00:42 by digallar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ INCLS		= $(addprefix ${DIRINCL}, $(addsuffix .h, ${INCL}))
 
 DIRLIBFT	= ./libft/
 
-SRC			= builtins error_exit init main
+SRC			= builtins error_exit init main memory
 
 SRCS		= $(addprefix ${DIRSCR}, $(addsuffix .c, ${SRC}))
 
