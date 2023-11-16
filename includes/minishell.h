@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/16 15:35:53 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/16 17:13:15 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,24 @@
 
 # define PROMPT "Minishell>$ "
 
+typedef enum s_cmdtype {
+	ECHO,
+	CD,
+	PWD,
+	EXPORT,
+	UNSET,
+	ENV,
+	EXIT,
+	EXEC
+}	t_cmdtype;
+
 typedef struct s_command
 {
-	int		cmd;
-	char	*argv;
-	char	*i_redirect;
-	char	*o_redirect;
-	char	*a_redirect;
+	t_cmdtype	cmd;
+	char		**argv;
+	char		*i_redirect;
+	char		*o_redirect;
+	char		*a_redirect;
 }			t_command;
 
 typedef struct s_data 
