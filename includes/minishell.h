@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/16 15:23:09 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:35:53 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,8 @@ void    free_exit(t_data *data);
 
 /* memory.c */
 void	*safe_malloc(t_data *data, size_t size);
+
+/* parser.c */
+void	parse_input(t_data *data);
 
 #endif /* MINISHELL_H */
