@@ -45,12 +45,14 @@ typedef struct s_command
 	char		*i_redirect;
 	char		*o_redirect;
 	char		*a_redirect;
+	int			exit_code;
 }			t_command;
 
 typedef struct s_data 
 {
 	t_list	*free_list;
 	t_list	*commands;
+	int		nb_cmds; /*this is good to know when piping and forking*/
 	char	*user_input;
 }			t_data;
 
@@ -58,9 +60,13 @@ typedef struct s_data
 void    *init_zero();
 
 /* builtins.c */
-void    builtins(t_data *data);
+void    check_builtins(t_command *command);
+
+/* commands_executor.c */
+int single_command(t_command *command);
 
 /* error_exit.c */
+void	free_data(t_data *data);
 void    free_exit(t_data *data);
 
 /* memory.c */

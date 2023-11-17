@@ -24,9 +24,10 @@ int	main()
 		{
 			add_history(data->user_input);
 			parse_input(data);
-			builtins(data);
-			free(data->user_input);
-			data->user_input = NULL;
+			if (data->nb_cmds < 2)
+				single_command(data->commands->content);
+			//execute_commands(data);
+			free_data(data);
 		}
 	}
 	return (0);

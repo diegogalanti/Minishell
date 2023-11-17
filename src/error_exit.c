@@ -17,7 +17,7 @@ static void	clear_list(void *list)
 	free(list);
 }
 
-void    free_exit(t_data *data)
+void    free_data(t_data *data)
 {
 	if (data && data->free_list)
 	{
@@ -28,7 +28,11 @@ void    free_exit(t_data *data)
 		free(data->user_input);
 		data->user_input = NULL;
 	}
+}
+
+void	free_exit(t_data *data)
+{
+	free_data(data);
 	clear_history();
 	exit (0);
 }
-
