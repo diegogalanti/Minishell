@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/16 17:13:15 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/18 14:08:42 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,13 @@ typedef enum s_cmdtype {
 typedef struct s_command
 {
 	t_cmdtype	cmd;
+	char		*cmd_input;
 	char		**argv;
 	char		*i_redirect;
 	char		*o_redirect;
 	char		*a_redirect;
 	int			exit_code;
+	t_list		*free_list;
 }			t_command;
 
 typedef struct s_data 

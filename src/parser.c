@@ -6,22 +6,102 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/16 17:25:37 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:12:11 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	parse_input(t_data *data)
+int		ft_isspace(int c)
+{
+	c = (unsigned char)c;
+	return (c == '\n' || c == '\t' || c == '\f' || c == '\v' || c == ' '
+		|| c == '\r');
+}
+
+void alloc_argv(t_command *command)
 {
 	int	i;
-	
+	int	qot;
+	int size;
+
+	qot = 0;
 	i = -1;
-	while (data->user_input[++i])
+	size = 1;
+	while(ft_isspace(command->cmd_input[++i]))
 	{
 	}
-	data->nb_cmds = 1;
+	i--;
+	while (command->cmd_input[++i])
+	{
+		if (command->cmd_input[i] == '\"' && !qot)
+			qot = 1;
+		else if (command->cmd_input[i] == '\"' && qot == 1)
+			qot = 0;
+		else if (command->cmd_input[i] == '\'' && !qot)
+			qot = 2;
+		else if (command->cmd_input[i] == '\'' && qot == 2)
+			qot = 0;
+		else if (ft_isspace(command->cmd_input[i]) && !qot)
+		{
+			while(ft_isspace(command->cmd_input[i + 1]))
+			{
+				i++;
+			}
+			size++;
+			//se for espaco e nada depois? tem que checar
+		}
+	}
+}
+
+void	create_command(t_data *data, int start, int end)
+{
+	t_command *command = safe_malloc(data, sizeof(t_command));
+	if (!data->commands)
+		data->commands = ft_lstnew(command);
+	else
+		ft_lstadd_back(&data->commands, ft_lstnew(command));
+	command->cmd_input = ft_substr(data->user_input, start, end - start);
+	alloc_argv(command);
+
+}
+
+void	split_commands(t_data *data)
+{
+	int	i;
+	int	qot;
+	int start_i;
+
+	qot = 0;
+	i = -1;
+	start_i = 0;
+	while (data->user_input[++i])
+	{
+		if (data->user_input[i] == '\"' && !qot)
+			qot = 1;
+		else if (data->user_input[i] == '\"' && qot == 1)
+			qot = 0;
+		else if (data->user_input[i] == '\'' && !qot)
+			qot = 2;
+		else if (data->user_input[i] == '\'' && qot == 2)
+			qot = 0;
+		else if ((data->user_input[i] == '|' && !qot) || data->user_input[i + 1] == 0)
+		{
+			create_command(data, start_i, i);
+			start_i = i + 1;
+		}
+	}
+}
+
+void	parse_input(t_data *data)
+{
+	split_commands(data);
 	
+	//code do split user_input into cmd_input
+	//code to break command_input into tokens
+	/* one block for each command */
+	//first command
+	data->nb_cmds = 1;
 	t_command *command1 = safe_malloc(data, sizeof(t_command));
 	if (!strncmp(data->user_input, "echo", 4))
 		command1->cmd = ECHO;
