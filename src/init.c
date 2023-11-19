@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:52:33 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/16 15:25:14 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:14:10 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,6 @@ void   *init_data(char **env)
 		return (printf("Error: Could not initialize environment variable\n"),
 				free_exit(data), (void *) 0);
 	data->shvar = NULL;
+	data->nb_cmds = 0;
 	return (data);
 }

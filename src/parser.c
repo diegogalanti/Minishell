@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/19 20:12:11 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:15:07 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,39 +19,87 @@ int		ft_isspace(int c)
 		|| c == '\r');
 }
 
+void	skip_spaces(t_command *command, int *i)
+{
+	while(ft_isspace(command->cmd_input[*i]))
+	{
+		(*i)++;
+	}
+}
+
 void alloc_argv(t_command *command)
 {
 	int	i;
-	int	qot;
 	int size;
+	t_parse_status status;
 
-	qot = 0;
 	i = -1;
-	size = 1;
-	while(ft_isspace(command->cmd_input[++i]))
-	{
-	}
-	i--;
+	size = 0;
+	status = WAITING_FOR_CHAR;
 	while (command->cmd_input[++i])
 	{
-		if (command->cmd_input[i] == '\"' && !qot)
-			qot = 1;
-		else if (command->cmd_input[i] == '\"' && qot == 1)
-			qot = 0;
-		else if (command->cmd_input[i] == '\'' && !qot)
-			qot = 2;
-		else if (command->cmd_input[i] == '\'' && qot == 2)
-			qot = 0;
-		else if (ft_isspace(command->cmd_input[i]) && !qot)
+		if (command->cmd_input[i] == '\"')
 		{
-			while(ft_isspace(command->cmd_input[i + 1]))
+			if (status == WAITING_FOR_CHAR)
+				status = FOUND_DQOT_WFC;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_DQOT_WFC)
+				status = WAITING_FOR_CHAR;
+			else if (status == FOUND_DQOT)
+				status = WAITING_FOR_SPACE;
+			else if (status == WAITING_FOR_SPACE)
+				status = FOUND_DQOT;
+		}
+		else if (command->cmd_input[i] == '\'')
+		{
+			if (status == WAITING_FOR_CHAR)
+				status = FOUND_SQOT_WFC;
+			else if (status == FOUND_SQOT_WFC)
+				status = WAITING_FOR_CHAR;
+			else if (status == FOUND_SQOT)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+				status = FOUND_SQOT;
+		}
+		else if (ft_isspace(command->cmd_input[i]))
+		{
+			if (status == WAITING_FOR_CHAR)
+				continue;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
 			{
-				i++;
+				status = WAITING_FOR_CHAR;
+				size++;
 			}
-			size++;
-			//se for espaco e nada depois? tem que checar
+		}
+		else
+		{
+			if (status == WAITING_FOR_CHAR)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
 		}
 	}
+	if (status == WAITING_FOR_SPACE)
+		size++;
+	printf("Command has %i arguments.\n", size);
+	command->argv = command_safe_malloc(command, 8 * size);
 }
 
 void	create_command(t_data *data, int start, int end)
@@ -62,35 +110,107 @@ void	create_command(t_data *data, int start, int end)
 	else
 		ft_lstadd_back(&data->commands, ft_lstnew(command));
 	command->cmd_input = ft_substr(data->user_input, start, end - start);
+	printf("Command input = [%s]\n", command->cmd_input);
 	alloc_argv(command);
 
 }
 
-void	split_commands(t_data *data)
+//I HAVE TO HANDLE COMPLETELY EMPTY COMMANDS, IT SHOULD NOT TRY TO RUN OTHER COMMAND.EG. "echo abc| |echo cde" should just return 258 and print "-bash: syntax error near unexpected token `|'"
+int	split_commands(t_data *data)
 {
 	int	i;
-	int	qot;
+	t_parse_status status;
 	int start_i;
 
-	qot = 0;
 	i = -1;
 	start_i = 0;
+	status = WAITING_FOR_CHAR;
 	while (data->user_input[++i])
 	{
-		if (data->user_input[i] == '\"' && !qot)
-			qot = 1;
-		else if (data->user_input[i] == '\"' && qot == 1)
-			qot = 0;
-		else if (data->user_input[i] == '\'' && !qot)
-			qot = 2;
-		else if (data->user_input[i] == '\'' && qot == 2)
-			qot = 0;
-		else if ((data->user_input[i] == '|' && !qot) || data->user_input[i + 1] == 0)
+		if (data->user_input[i] == '\"')
 		{
-			create_command(data, start_i, i);
-			start_i = i + 1;
+			if (status == WAITING_FOR_CHAR)
+				status = FOUND_DQOT_WFC;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_DQOT_WFC)
+				status = WAITING_FOR_CHAR;
+			else if (status == FOUND_DQOT)
+				status = WAITING_FOR_PIPE;
+			else if (status == WAITING_FOR_PIPE)
+				status = FOUND_DQOT;
+		}
+		else if (data->user_input[i] == '\'')
+		{
+			if (status == WAITING_FOR_CHAR)
+				status = FOUND_SQOT_WFC;
+			else if (status == FOUND_SQOT_WFC)
+				status = WAITING_FOR_CHAR;
+			else if (status == FOUND_SQOT)
+				status = WAITING_FOR_PIPE;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == WAITING_FOR_PIPE)
+				status = FOUND_SQOT;
+		}
+		else if (data->user_input[i] == '|')
+		{
+			if (status == WAITING_FOR_CHAR)
+			{
+				printf("-minishell: syntax error near unexpected token `|'\n");
+				return (258);
+			}
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == WAITING_FOR_PIPE)
+			{
+				create_command(data, start_i, i);
+				start_i = i + 1;
+				data->nb_cmds++;
+				status = WAITING_FOR_CHAR;
+			}
+		}
+		else if (ft_isspace(data->user_input[i]))
+		{
+			if (status == WAITING_FOR_CHAR)
+				continue;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == WAITING_FOR_PIPE)
+				continue;
+		}
+		else
+		{
+			if (status == WAITING_FOR_CHAR)
+				status = WAITING_FOR_PIPE;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
 		}
 	}
+	if (status == WAITING_FOR_PIPE)
+	{
+		create_command(data, start_i, i);
+		data->nb_cmds++;
+	}
+	return (0);
 }
 
 void	parse_input(t_data *data)

@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/18 14:08:42 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:13:43 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,17 @@ typedef enum s_cmdtype {
 	EXIT,
 	EXEC
 }	t_cmdtype;
+
+typedef enum s_parse_status {
+	WAITING_FOR_CHAR,
+	FOUND_SQOT_WFC,
+	FOUND_SQOT,
+	FOUND_DQOT_WFC,
+	FOUND_DQOT,
+	WAITING_FOR_SPACE,
+	WAITING_FOR_PIPE
+
+}	t_parse_status;
 
 typedef struct s_command
 {
@@ -73,10 +84,13 @@ int single_command(t_data *data, t_command *command);
 /* error_exit.c */
 void	free_data(t_data *data);
 void    free_exit(t_data *data);
+void    free_command(t_command *command);
+
 
 /* memory.c */
 void	*safe_malloc(t_data *data, size_t size);
 void	*free_arr_str(char **str);
+void	*command_safe_malloc(t_command *command, size_t size);
 
 /* parser.c */
 void	parse_input(t_data *data);
