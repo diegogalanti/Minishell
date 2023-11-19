@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/19 20:15:07 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:52:40 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,87 @@ void	skip_spaces(t_command *command, int *i)
 	while(ft_isspace(command->cmd_input[*i]))
 	{
 		(*i)++;
+	}
+}
+
+void build_argv(t_command *command)
+{
+	int	i;
+	int pos;
+	int start_i;
+	t_parse_status status;
+
+	i = -1;
+	pos = 0;
+	start_i = 0;
+	status = WAITING_FOR_CHAR;
+	while (command->cmd_input[++i])
+	{
+		if (command->cmd_input[i] == '\"')
+		{
+			if (status == WAITING_FOR_CHAR)
+				status = FOUND_DQOT_WFC;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_DQOT_WFC)
+				status = WAITING_FOR_CHAR;
+			else if (status == FOUND_DQOT)
+				status = WAITING_FOR_SPACE;
+			else if (status == WAITING_FOR_SPACE)
+				status = FOUND_DQOT;
+		}
+		else if (command->cmd_input[i] == '\'')
+		{
+			if (status == WAITING_FOR_CHAR)
+				status = FOUND_SQOT_WFC;
+			else if (status == FOUND_SQOT_WFC)
+				status = WAITING_FOR_CHAR;
+			else if (status == FOUND_SQOT)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+				status = FOUND_SQOT;
+		}
+		else if (ft_isspace(command->cmd_input[i]))
+		{
+			if (status == WAITING_FOR_CHAR)
+				continue;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				status = WAITING_FOR_CHAR;
+				command->argv[pos] = ft_substr(command->cmd_input, start_i, i - start_i);
+				printf("Argument = [%s]\n", command->argv[pos]);
+				start_i = i + 1;
+				pos++;
+			}
+		}
+		else
+		{
+			if (status == WAITING_FOR_CHAR)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_SQOT_WFC)
+				status = FOUND_SQOT;
+			else if (status == FOUND_DQOT_WFC)
+				status = FOUND_DQOT;
+		}
+	}
+	if (status == WAITING_FOR_SPACE)
+	{
+		command->argv[pos] = ft_substr(command->cmd_input, start_i, i - start_i);
+		printf("Argument = [%s]\n", command->argv[pos]);
 	}
 }
 
@@ -99,7 +180,29 @@ void alloc_argv(t_command *command)
 	if (status == WAITING_FOR_SPACE)
 		size++;
 	printf("Command has %i arguments.\n", size);
-	command->argv = command_safe_malloc(command, 8 * size);
+	command->argv = command_safe_malloc(command, 8 * size + 1);
+	command->argv[size] = 0;
+}
+
+void	add_type(t_command *command)
+{
+
+	if (!strncmp(command->argv[0], "echo", ft_strlen(command->argv[0])))
+		command->cmd = ECHO;
+	else if (!strncmp(command->argv[0], "cd ", ft_strlen(command->argv[0])))
+		command->cmd = CD;
+	else if (!strncmp(command->argv[0], "pwd", ft_strlen(command->argv[0])))
+		command->cmd = PWD;
+	else if (!strncmp(command->argv[0], "env", ft_strlen(command->argv[0])))
+		command->cmd = ENV;
+	else if (!strncmp(command->argv[0], "exit", ft_strlen(command->argv[0])))
+		command->cmd = EXIT;
+	else if (!strncmp(command->argv[0], "export", ft_strlen(command->argv[0])))
+		command->cmd = EXPORT;
+	else if (!strncmp(command->argv[0], "unset", ft_strlen(command->argv[0])))
+		command->cmd = UNSET;
+	else
+		command->cmd = EXEC;
 }
 
 void	create_command(t_data *data, int start, int end)
@@ -112,7 +215,8 @@ void	create_command(t_data *data, int start, int end)
 	command->cmd_input = ft_substr(data->user_input, start, end - start);
 	printf("Command input = [%s]\n", command->cmd_input);
 	alloc_argv(command);
-
+	build_argv(command);
+	add_type(command);
 }
 
 //I HAVE TO HANDLE COMPLETELY EMPTY COMMANDS, IT SHOULD NOT TRY TO RUN OTHER COMMAND.EG. "echo abc| |echo cde" should just return 258 and print "-bash: syntax error near unexpected token `|'"
@@ -221,23 +325,10 @@ void	parse_input(t_data *data)
 	//code to break command_input into tokens
 	/* one block for each command */
 	//first command
-	data->nb_cmds = 1;
-	t_command *command1 = safe_malloc(data, sizeof(t_command));
-	if (!strncmp(data->user_input, "echo", 4))
-		command1->cmd = ECHO;
-	else if (!strncmp(data->user_input, "cd ", 3))
-		command1->cmd = CD;
-	else if (!strncmp(data->user_input, "pwd", ft_strlen(data->user_input)))
-		command1->cmd = PWD;
-	else if (!strncmp(data->user_input, "env", 3))
-		command1->cmd = ENV;
-	else if (!strncmp(data->user_input, "exit", 4))
-		command1->cmd = EXIT;
-	else if (!strncmp(data->user_input, "export", 6))
-		command1->cmd = EXPORT;
-	else if (!strncmp(data->user_input, "unset", 5))
-		command1->cmd = UNSET;
-	command1->argv = fs_split(data, data->user_input, ' ');
+	// data->nb_cmds = 1;
+	// t_command *command1 = safe_malloc(data, sizeof(t_command));
+	
+	// command1->argv = fs_split(data, data->user_input, ' ');
 	/* one block for each command */
 	//first command
 	//	t_command *command1 = safe_malloc(data, sizeof(t_command));
@@ -262,7 +353,7 @@ void	parse_input(t_data *data)
 	//	command2->o_redirect = 0; /* set to 0 to use stdout. o_redirect and a_redirect cannot be used together. */
 	//	command2->a_redirect = 0; /* set to 0 to use stdout. o_redirect and a_redirect cannot be used together. */
 	//for the first command
-	data->commands = ft_lstnew(command1);
+	// data->commands = ft_lstnew(command1);
 
 	//for every additional command
 	//ft_lstadd_back(&data->commands, ft_lstnew(command2));

@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 14:44:27 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/19 20:15:50 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:29:44 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ static void	clear_list(void *list)
 {
 	free(list);
 }
-
 
 void    free_data(t_data *data)
 {

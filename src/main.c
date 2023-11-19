@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:44:14 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/16 15:34:57 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:30:18 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	main(int argc, char **argv, char **env)
 			if (data->nb_cmds < 2)
 				single_command(data, data->commands->content);
 			//execute_commands(data);
-			free_data(data);
+			//free_data(data);
 			data = init_data(env);
 		}
 	}
