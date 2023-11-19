@@ -17,8 +17,11 @@ static void	clear_list(void *list)
 	free(list);
 }
 
+
 void    free_data(t_data *data)
 {
+//	int	i;
+
 	if (data && data->free_list)
 	{
 		ft_lstclear(&(data->free_list), clear_list);
@@ -28,6 +31,19 @@ void    free_data(t_data *data)
 		free(data->user_input);
 		data->user_input = NULL;
 	}
+	/* tat added data->env because it is allocated with ft_split for test purposes,
+	can be deleted as soon as diego has the parser finished */
+	/*i = -1;
+	if (data && data->env && data->env[0])
+	{
+		while (data->env[++i])
+		{
+			free(data->env[i]);
+			data->env[i] = NULL;
+		}
+		free(data->env);
+		data->env = NULL;
+	}*/
 }
 
 void	free_exit(t_data *data)

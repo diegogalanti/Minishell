@@ -19,7 +19,7 @@ void	*safe_malloc(t_data *data, size_t size)
 
 	ptr = malloc(size);
 	if (!ptr)
-		return (ft_printf("Error\nCould not malloc.\n"),
+		return (ft_printf("Error: Could not malloc.\n"),
 			free_exit(data),
 			(void *) 0);
 	if (!data)
@@ -38,4 +38,23 @@ void	*safe_malloc(t_data *data, size_t size)
 		ft_lstadd_front(&(data->free_list), new);
 	}
 	return (ptr);
+}
+
+/* frees an array of strings
+	To Do: list free has to be added so that there is no double free when calling free_data*/
+
+void	*free_arr_str(char **str)
+{
+	int	i;
+
+	i = -1;
+	if (str == NULL)
+		return (NULL);
+	while (str[++i])
+	{
+		free(str[i]);
+		str[i] = NULL;
+	}
+	free(str);
+	return (NULL);
 }

@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-int single_command(t_command *command)
+int single_command(t_data *data, t_command *command)
 {
-    check_builtins(command);
+    check_builtins(data, command);
     return (0);
 }
 

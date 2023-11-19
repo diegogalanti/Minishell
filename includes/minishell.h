@@ -54,16 +54,19 @@ typedef struct s_data
 	t_list	*commands;
 	int		nb_cmds; /*this is good to know when piping and forking*/
 	char	*user_input;
+	char	**env; /*these are the environment variables (will be inherited)*/
+	char	**shvar;	/*these are the shell variables (only present in this shell)*/
 }			t_data;
 
 /* init.c */
-void    *init_zero();
+void    *init_data(char **env);
+int		init_env(t_data *data, char **env);
 
 /* builtins.c */
-void    check_builtins(t_command *command);
+void    check_builtins(t_data *data, t_command *command);
 
 /* commands_executor.c */
-int single_command(t_command *command);
+int single_command(t_data *data, t_command *command);
 
 /* error_exit.c */
 void	free_data(t_data *data);
@@ -71,8 +74,20 @@ void    free_exit(t_data *data);
 
 /* memory.c */
 void	*safe_malloc(t_data *data, size_t size);
+void	*free_arr_str(char **str);
 
 /* parser.c */
 void	parse_input(t_data *data);
+
+/* env_var.c */
+char   **add_var(t_data *data, char **var, char *new_var);
+char    **del_var(t_data *data, char **var, char *del_var);
+
+/* utils.c */
+char	*fs_strdup(t_data *data, char *s);
+int	ft_strvcmp(const char *s1, const char *s2);
+
+/* sf_split.c */
+char	**fs_split(t_data *data, char const *s, char c);
 
 #endif /* MINISHELL_H */
