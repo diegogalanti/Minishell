@@ -39,10 +39,12 @@ void   *init_data(char **env)
 	data = 0;
 	data = safe_malloc(data, sizeof(t_data));
 	data->user_input = NULL;
+	data->shvar = NULL;
+	data->free_list = NULL;
+	data->commands = NULL;
+	data->nb_cmds = 0;
 	if (!init_env(data, env))
 		return (printf("Error: Could not initialize environment variable\n"),
 				free_exit(data), (void *) 0);
-	data->shvar = NULL;
-	data->nb_cmds = 0;
 	return (data);
 }

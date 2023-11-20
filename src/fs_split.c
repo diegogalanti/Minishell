@@ -42,7 +42,7 @@ static size_t	ft_len_str(char const *s, char c)
 	return (i);
 }
 
-static char	**ft_malloc_fail(char **arr)
+/*static char	**ft_malloc_fail(char **arr)
 {
 	int	x;
 
@@ -56,7 +56,7 @@ static char	**ft_malloc_fail(char **arr)
 	free(arr);
 	arr = NULL;
 	return (0);
-}
+}*/
 
 static char	**ft_createstr(t_data *data, char const *s, char c, char **arr, int nb)
 {
@@ -71,7 +71,7 @@ static char	**ft_createstr(t_data *data, char const *s, char c, char **arr, int 
 			s++;
 		arr[x] = (char *)safe_malloc(data, (sizeof(char) * (ft_len_str(s, c) + 1)));
 		if (!arr[x])
-			return (ft_malloc_fail(arr));
+			return (NULL);
 		while (*s != c && *s != '\0')
 		{
 			arr[x][y++] = *(s++);

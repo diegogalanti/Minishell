@@ -43,7 +43,7 @@ void	*safe_malloc(t_data *data, size_t size)
 /* frees an array of strings
 	To Do: list free has to be added so that there is no double free when calling free_data*/
 
-void	*free_arr_str(char **str)
+/*void	*free_arr_str(char **str)
 {
 	int	i;
 
@@ -57,7 +57,7 @@ void	*free_arr_str(char **str)
 	}
 	free(str);
 	return (NULL);
-}
+}*/
 
 void	*command_safe_malloc(t_command *command, size_t size)
 {

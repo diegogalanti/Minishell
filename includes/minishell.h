@@ -96,8 +96,11 @@ void	*command_safe_malloc(t_command *command, size_t size);
 void	parse_input(t_data *data);
 
 /* env_var.c */
-char   **add_var(t_data *data, char **var, char *new_var);
+//char   **add_var(t_data *data, char **var, char *new_var);
 char    **del_var(t_data *data, char **var, char *del_var);
+char    **add_mod_var(t_data *data, char **var, char *new_var);
+int		is_var(char **car, char *s);
+char	*find_var(char **var, char *s);
 
 /* utils.c */
 char	*fs_strdup(t_data *data, char *s);

@@ -25,7 +25,8 @@ int	main(int argc, char **argv, char **env)
 {
 	t_data	*data;
 
-	printf("argc: %i, argv: %s\n", argc, *argv);
+	if (argc > 1)
+		printf("implement non-interactive mode for %s\n", *argv);
 	data = init_data(env);
 	while (1)
 	{
@@ -37,8 +38,8 @@ int	main(int argc, char **argv, char **env)
 			if (data->nb_cmds < 2)
 				single_command(data, data->commands->content);
 			//execute_commands(data);
-			//free_data(data);
-			data = init_data(env);
+			free(data->user_input);
+			data->user_input = NULL;
 		}
 	}
 	return (0);

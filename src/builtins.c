@@ -12,6 +12,12 @@
 
 #include "minishell.h"
 
+/* builtin_echo: mimicks "echo" in bash
+	writes all the characters after "echo" to stdout and prints a newline
+	if there are more than one space, the superflue spaces are omitted
+	with "echo -n" the newline at the end is not printed
+	TO DO: ; -> after ";" is interpreted as command (Do we have to implement that?)
+	*/
 
 void	builtin_echo(t_command *command, int fd_out)
 {
@@ -35,42 +41,6 @@ void	builtin_echo(t_command *command, int fd_out)
 	if (n == 0)
 		ft_putchar_fd('\n', fd_out);
 }
-
-/* builtin_echo: mimicks "echo" in bash
-	writes all the characters after "echo" to stdout and prints a newline
-	if there are more than one space, the superflue spaces are omitted
-	with "echo -n" the newline at the end is not printed
-	TO DO: "" -> should not be printed
-			; -> after ";" is interpreted as command (Do we have to implement that?)
-		Question: are "" handled here or in the parser?
-	*/
-
-/*void	builtin_echo(t_data *data)
-{
-	int	i;
-	char	**str;
-	int	n;
-
-	str = ft_split(data->user_input + 4, 32);
-	i = 0;
-	n = 0;
-	if (!strncmp(str[i], "-n", 2))
-	{
-		n = 1;
-		i++;
-	}
-	while (str[i])
-	{
-		if (i != 0)
-			ft_putchar_fd(32, 1);
-		ft_putstr_fd(ft_strtrim(str[i], "  "), 1);
-		i++;
-	}
-	if (n == 0)
-		ft_putchar_fd('\n', 1);
-	free_str(str);
-	str = NULL;
-}*/
 
 /* builtin_pwd: mimicks the behaviour of pwd in bash
 	With the help of getcwd() the absolute path of the current working
@@ -100,13 +70,18 @@ void	builtin_pwd()
 	- use errno for error message
 	- implement -- and -*/
 
-void	builtin_cd(t_command *command)
+void	builtin_cd(t_data *data, t_command *command)
 {
 	int	ret;
 
 	if (command->argv[1] == NULL)
 		return ;
-	ret = chdir(command->argv[1]);
+	if (!strncmp(command->argv[1], "-", ft_strlen(command->argv[1])))
+		ret = chdir(ft_strtrim(find_var(data->env, "OLDPWD"), "="));
+	else if (!strncmp(command->argv[1], "--", ft_strlen(command->argv[1])))
+		ret = chdir(ft_strtrim(find_var(data->env, "HOME"), "="));
+	else
+		ret = chdir(command->argv[1]);
 	if (ret == 0)
 		return ;
 	else
@@ -177,12 +152,13 @@ void	builtin_export(t_data *data, t_command *command, int fd)
 	while (command->argv[++i] != NULL)
 	{
 		if (check_export_var(command->argv[i]))
-			data->env = add_var(data, data->env, command->argv[i]);
+			data->env = add_mod_var(data, data->env, command->argv[i]);
 	}
 }
 
 /* builtin_unset: deletes a or several environment variables 
-	if no variable is given, it just returns*/
+	if no variable is given, it just returns
+	TO DO: Does not work if variable name is given only*/
 
 void	builtin_unset(t_data *data, t_command *command)
 {
@@ -246,7 +222,7 @@ void    check_builtins(t_data *data, t_command *command)
 	if (command->cmd == ECHO)
 		builtin_echo(command, 1);
 	else if(command->cmd == CD)
-		builtin_cd(command);
+		builtin_cd(data, command);
 	else if (command->cmd == PWD)
 		builtin_pwd();
 	else if (command->cmd == EXPORT)

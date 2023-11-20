@@ -56,6 +56,7 @@ void    free_command(t_command *command)
 		free(command->cmd_input);
 		command->cmd_input = NULL;
 	}
+	exit (0);
 }
 
 void	free_exit(t_data *data)

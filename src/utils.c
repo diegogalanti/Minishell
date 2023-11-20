@@ -33,7 +33,9 @@ char	*fs_strdup(t_data *data, char *s)
 	return (cpy);
 }
 
-/* string variable compare: compares environment variables*/
+/* string variable compare: compares environment variables
+	This function is like ft_strcmp but it only compares the strings until an equal sign
+	is found in s1.*/
 
 int	ft_strvcmp(const char *s1, const char *s2)
 
@@ -45,6 +47,10 @@ int	ft_strvcmp(const char *s1, const char *s2)
 	i = 0;
 	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0' && s1[i] != '=')
 		i++;
+	if (s1[i] == '=' && (s2[i] == '\0' || s2[i] == '='))
+			return (0);
+	else
+		return(1);
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 

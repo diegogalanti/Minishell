@@ -180,7 +180,7 @@ void alloc_argv(t_command *command)
 	if (status == WAITING_FOR_SPACE)
 		size++;
 	printf("Command has %i arguments.\n", size);
-	command->argv = command_safe_malloc(command, 8 * size + 1);
+	command->argv = command_safe_malloc(command, 8 * (size + 1));
 	command->argv[size] = 0;
 }
 
@@ -320,6 +320,8 @@ int	split_commands(t_data *data)
 
 void	parse_input(t_data *data)
 {
+	data->nb_cmds = 0;
+	data->commands = NULL;
 	split_commands(data);
 	
 	//code do split user_input into cmd_input
