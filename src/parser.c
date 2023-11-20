@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/20 09:56:50 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/21 11:07:59 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,130 @@ void	skip_spaces(t_command *command, int *i)
 	while(ft_isspace(command->cmd_input[*i]))
 	{
 		(*i)++;
+	}
+}
+
+void expand_var(t_command *command, char **env, int start, int end)
+{
+	printf("Start %i End %i\n", start, end);
+	if (env)
+		printf("Trying to replace [%s]\n", ft_substr(command->cmd_input, start, (end - start) + 1));
+}
+
+void expand_vars(t_command *command, char **env)
+{
+	int	i;
+	int start_i;
+	t_parse_status status;
+
+	i = -1;
+	start_i = 0;
+	status = WAITING_FOR_DOLLAR;
+	while (command->cmd_input[++i])
+	{
+		//have to check for all FOUND_DQOT (means found a $ inside a DQOT. Nornmally will expand normally, unless has empty var with space/SQOT/DQOT after it will not expand and just print the $)
+		if (command->cmd_input[i] == '\'')
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				status = FOUND_SQOT_WFD;
+			else if (status == FOUND_SQOT_WFD)
+				status = WAITING_FOR_DOLLAR;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				expand_var(command, env, start_i, i - 1);
+				status = FOUND_SQOT_WFD;
+			}
+			else if (status == WAITING_FOR_CHAR)
+			{
+				expand_var(command, env, start_i, i - 1);
+				status = FOUND_SQOT_WFD;
+			}
+			else if (status == FOUND_DQOT_WFD)
+				continue;
+		}
+		else if (command->cmd_input[i] == '\"')
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				status = FOUND_DQOT_WFD;
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				expand_var(command, env, start_i, i - 1);
+				status = FOUND_DQOT_WFD;
+			}
+			else if (status == WAITING_FOR_CHAR)
+			{
+				expand_var(command, env, start_i, i - 1);
+				status = FOUND_DQOT_WFD;
+			}
+			else if (status == FOUND_DQOT_WFD)
+				status = WAITING_FOR_DOLLAR;
+		}
+		else if (ft_isspace(command->cmd_input[i]))
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				continue;
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				expand_var(command, env, start_i, i - 1);
+				status = WAITING_FOR_DOLLAR;
+			}
+			else if (status == WAITING_FOR_CHAR)
+			{
+				expand_var(command, env, start_i, i - 1);
+				status = WAITING_FOR_DOLLAR;
+			}
+			else if (status == FOUND_DQOT_WFD)
+				continue;
+
+		}
+		else if (command->cmd_input[i] == '$')
+		{
+			if (status == WAITING_FOR_DOLLAR)
+			{
+				start_i = i;
+				status = WAITING_FOR_CHAR;
+			}
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				expand_var(command, env, start_i, i - 1);
+				status = WAITING_FOR_CHAR;
+				start_i = i;
+			}
+			else if (status == WAITING_FOR_CHAR)
+			{
+				expand_var(command, env, start_i, i - 1);
+				status = WAITING_FOR_CHAR;
+				start_i = i;
+			}
+			else if (status == FOUND_DQOT_WFD)
+			{
+				start_i = i;
+				status = FOUND_DQOT;
+			}
+		}
+		else
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				continue;
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+				continue;
+			else if (status == WAITING_FOR_CHAR)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_DQOT_WFD)
+				continue;
+		}
+	}
+	if (status == WAITING_FOR_SPACE)
+	{
+		expand_var(command, env, start_i, i - 1);
 	}
 }
 
@@ -215,6 +339,7 @@ void	create_command(t_data *data, int start, int end)
 	command->cmd_input = ft_substr(data->user_input, start, end - start);
 	command->free_list = data->free_list;
 	printf("Command input = [%s]\n", command->cmd_input);
+	expand_vars(command, data->env);
 	alloc_argv(command);
 	build_argv(command);
 	add_type(command);
@@ -318,10 +443,15 @@ int	split_commands(t_data *data)
 	return (0);
 }
 
-void	parse_input(t_data *data)
+void	init_commands(t_data *data)
 {
 	data->nb_cmds = 0;
-	data->commands = NULL;
+	data->commands = 0;
+}
+
+void	parse_input(t_data *data)
+{
+	init_commands(data);
 	split_commands(data);
 	
 	//code do split user_input into cmd_input

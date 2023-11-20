@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/19 20:13:43 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/20 15:56:13 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,14 @@ typedef enum s_cmdtype {
 typedef enum s_parse_status {
 	WAITING_FOR_CHAR,
 	FOUND_SQOT_WFC,
+	FOUND_SQOT_WFD,
 	FOUND_SQOT,
 	FOUND_DQOT_WFC,
+	FOUND_DQOT_WFD,
 	FOUND_DQOT,
 	WAITING_FOR_SPACE,
-	WAITING_FOR_PIPE
+	WAITING_FOR_PIPE,
+	WAITING_FOR_DOLLAR
 
 }	t_parse_status;
 
