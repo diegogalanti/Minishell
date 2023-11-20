@@ -65,10 +65,11 @@ void	builtin_pwd()
 
 /* builtin_cd: mimicks the behaviour of cd in bash
 	it accepts absolute and relative path and .. and .
+	as well as -- and -
 	
 	To Do (maybe, not sure if we have to):
 	- use errno for error message
-	- implement -- and -*/
+	- update OLDPWD so that cd - works properly*/
 
 void	builtin_cd(t_data *data, t_command *command)
 {
