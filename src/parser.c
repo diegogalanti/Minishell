@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/19 20:52:40 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/20 09:56:50 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +213,7 @@ void	create_command(t_data *data, int start, int end)
 	else
 		ft_lstadd_back(&data->commands, ft_lstnew(command));
 	command->cmd_input = ft_substr(data->user_input, start, end - start);
+	command->free_list = data->free_list;
 	printf("Command input = [%s]\n", command->cmd_input);
 	alloc_argv(command);
 	build_argv(command);
