@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 17:51:58 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/16 15:26:52 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:14:31 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,32 @@ void	*free_arr_str(char **str)
 	}
 	free(str);
 	return (NULL);
+}
+
+void	*command_safe_malloc(t_command *command, size_t size)
+{
+	void	*ptr;
+	t_list	*new;
+
+	ptr = malloc(size);
+	if (!ptr)
+		return (ft_printf("Error\nCould not malloc.\n"),
+			free_command(command),
+			(void *) 0);
+	if (!command)
+		return (ptr);
+	if (!command->free_list)
+	{
+		command->free_list = ft_lstnew(ptr);
+		if (!command->free_list)
+			return (free_command(command), (void *) 0);
+	}
+	else
+	{
+		new = ft_lstnew(ptr);
+		if (!new)
+			return (free_command(command), (void *) 0);
+		ft_lstadd_front(&(command->free_list), new);
+	}
+	return (ptr);
 }

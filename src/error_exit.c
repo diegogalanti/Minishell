@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 14:44:27 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/16 15:22:42 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/20 09:59:23 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ static void	clear_list(void *list)
 {
 	free(list);
 }
-
 
 void    free_data(t_data *data)
 {
@@ -44,6 +43,19 @@ void    free_data(t_data *data)
 		free(data->env);
 		data->env = NULL;
 	}*/
+}
+
+void    free_command(t_command *command)
+{
+	if (command && command->free_list)
+	{
+		ft_lstclear(&(command->free_list), clear_list);
+	}
+	if (command->cmd_input)
+	{
+		free(command->cmd_input);
+		command->cmd_input = NULL;
+	}
 }
 
 void	free_exit(t_data *data)
