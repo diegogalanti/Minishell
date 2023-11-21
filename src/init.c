@@ -43,6 +43,8 @@ void   *init_data(char **env)
 	data->free_list = NULL;
 	data->commands = NULL;
 	data->nb_cmds = 0;
+	data->pid = NULL;
+	data->exit_status = 0;
 	if (!init_env(data, env))
 		return (printf("Error: Could not initialize environment variable\n"),
 				free_exit(data), (void *) 0);

@@ -58,6 +58,8 @@ typedef struct s_command
 	char		*o_redirect;
 	char		*a_redirect;
 	int			exit_code;
+	int			fd_in;
+	int			fd_out;
 	t_list		*free_list;
 }			t_command;
 
@@ -69,6 +71,8 @@ typedef struct s_data
 	char	*user_input;
 	char	**env; /*these are the environment variables (will be inherited)*/
 	char	**shvar;	/*these are the shell variables (only present in this shell)*/
+	int		*pid;
+	int		exit_status;
 }			t_data;
 
 /* init.c */
@@ -80,6 +84,8 @@ void    check_builtins(t_data *data, t_command *command);
 
 /* commands_executor.c */
 int single_command(t_data *data, t_command *command);
+void    execute_command(t_command *command);
+void    execute(t_data *data);
 
 /* error_exit.c */
 void	free_data(t_data *data);
@@ -101,6 +107,9 @@ char    **del_var(t_data *data, char **var, char *del_var);
 char    **add_mod_var(t_data *data, char **var, char *new_var);
 int		is_var(char **car, char *s);
 char	*find_var(char **var, char *s);
+
+/* redirections.c */
+int	here_doc(t_data *data);
 
 /* utils.c */
 char	*fs_strdup(t_data *data, char *s);

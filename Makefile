@@ -21,7 +21,7 @@ INCLS		= $(addprefix ${DIRINCL}, $(addsuffix .h, ${INCL}))
 DIRLIBFT	= ./libft/
 
 SRC			= builtins error_exit init main memory parser commands_executor \
-				utils fs_split env_var
+				utils fs_split env_var redirections pipe
 
 SRCS		= $(addprefix ${DIRSCR}, $(addsuffix .c, ${SRC}))
 

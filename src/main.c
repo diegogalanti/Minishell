@@ -35,9 +35,7 @@ int	main(int argc, char **argv, char **env)
 		{
 			add_history(data->user_input);
 			parse_input(data);
-			if (data->nb_cmds < 2)
-				single_command(data, data->commands->content);
-			//execute_commands(data);
+			execute(data);
 			free(data->user_input);
 			data->user_input = NULL;
 		}
