@@ -86,3 +86,19 @@ void	*command_safe_malloc(t_command *command, size_t size)
 	}
 	return (ptr);
 }
+
+int	close_all_fd(t_data *data)
+{
+	int	i;
+
+	i = -1;
+	if (data->pipe)
+	{
+		while (++i < data->nb_cmds - 1)
+		{
+			if (close(data->pipe[i]) < 0)
+				printf("Minishell: Error: closing pipe failed\n");
+		}
+	}
+	return (1);
+}

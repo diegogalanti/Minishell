@@ -63,29 +63,32 @@ char	*find_path(t_data *data, char *cmd)
 /* Question: Does reassigning command->argv[0] lead to a memory leak?
 				(because only 1 element of argv is reassigned) */
 
-void    execute_command(t_data *data, t_command *command)
+int   execute_command(t_data *data, t_command *command)
 {
+	int stdout_cpy;
 
+	if (!command || !command->argv || !command->argv[0])
+	{
+		close(command->fd_in);
+		close(command->fd_out);
+		return (127);
+	}
 	if (access(command->argv[0], F_OK))
 	{
 		command->argv[0] = find_path(data, command->argv[0]);
 		if (!command->argv[0])
-		{
-			printf("Minishell: Could not find command\n");
-			return ;
-		}
+			return (printf("Minishell: Could not find command\n"), 127);
 	}
- /*   int stdout_cpy;
-
 	stdout_cpy = dup(STDOUT_FILENO);
 	dup2(command->fd_in, STDIN_FILENO);
 	dup2(command->fd_out, STDOUT_FILENO);
 	close(command->fd_in);
-	close(command->fd_out);*/
+	close(command->fd_out);
 	execve(command->argv[0], command->argv, NULL);
-  //  dup2(stdout_cpy, STDIN_FILENO);
-  //  close(command->fd_out);
+	dup2(stdout_cpy, STDIN_FILENO);
+	close(command->fd_out);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
+	exit (errno);
 }
 
 void    execute(t_data *data)
@@ -94,6 +97,6 @@ void    execute(t_data *data)
 	//	return (-1);
 	if (data->nb_cmds < 2 && data->commands)
 		single_command(data, data->commands->content);
-	//		else 
-	//			pipe(data);
+	else 
+		pipe_commands(data);
 }

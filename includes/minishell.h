@@ -71,6 +71,7 @@ typedef struct s_data
 	char	*user_input;
 	char	**env; /*these are the environment variables (will be inherited)*/
 	char	**shvar;	/*these are the shell variables (only present in this shell)*/
+	int		**pipe;
 	int		*pid;
 	int		exit_status;
 }			t_data;
@@ -79,13 +80,25 @@ typedef struct s_data
 void    *init_data(char **env);
 int		init_env(t_data *data, char **env);
 
+/* memory.c */
+void	*safe_malloc(t_data *data, size_t size);
+void	*free_arr_str(char **str);
+void	*command_safe_malloc(t_command *command, size_t size);
+int		close_all_fd(t_data *data);
+
+/* commands_executor.c */
+char	*find_path(t_data *data, char *cmd);
+int 	single_command(t_data *data, t_command *command);
+int		execute_command(t_data *data, t_command *command);
+void    execute(t_data *data);
+
 /* builtins.c */
 void    check_builtins(t_data *data, t_command *command);
 
-/* commands_executor.c */
-int single_command(t_data *data, t_command *command);
-void    execute_command(t_data *data, t_command *command);
-void    execute(t_data *data);
+/* pipe.c */
+int	creat_pipe(t_data *data);
+int	pipe_commands(t_data *data);
+int	child_process(t_data *data, t_command *command, int i);
 
 /* error_exit.c */
 void	free_data(t_data *data);
@@ -93,10 +106,7 @@ void    free_exit(t_data *data);
 void    free_command(t_command *command);
 
 
-/* memory.c */
-void	*safe_malloc(t_data *data, size_t size);
-void	*free_arr_str(char **str);
-void	*command_safe_malloc(t_command *command, size_t size);
+
 
 /* parser.c */
 void	parse_input(t_data *data);
