@@ -17,18 +17,18 @@ int single_command(t_data *data, t_command *command)
 	int pid;
 
 	if (!command->argv[0])
-		return (1);
+		return (0);
 	if (command->cmd == EXEC)
 	{
 		if ((pid = fork()) < 0)
-			return (printf("minishell: Error: fork process\n"), 1);
+			return (printf("minishell: Error: fork process\n"), 0);
 		if (pid == 0)
 			execute_command(command);
 		waitpid(pid, &data->exit_status, 0);
 	}
 	else
 	  check_builtins(data, command);
-	return (0);
+	return (1);
 }
 
 void    execute_command(t_command *command)
@@ -46,10 +46,10 @@ void    execute_command(t_command *command)
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
 }
 
-int    execute(t_data *data)
+void    execute(t_data *data)
 {
-	if (redirect(data) < 0)
-		return (-1);
+	//if (redirect(data) < 0)
+	//	return (-1);
 	if (data->nb_cmds < 2 && data->commands)
 		single_command(data, data->commands->content);
 	//		else 

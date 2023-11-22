@@ -26,7 +26,7 @@ void	builtin_echo(t_command *command, int fd_out)
 	
 	i = 1;
 	n = 0;
-	if (!strncmp(command->argv[i], "-n", 2))
+	if (command->argv[i] && !strncmp(command->argv[i], "-n", 2))
 	{
 		n = 1;
 		i++;
