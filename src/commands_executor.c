@@ -23,7 +23,7 @@ int single_command(t_data *data, t_command *command)
 		if ((pid = fork()) < 0)
 			return (printf("minishell: Error: fork process\n"), 0);
 		if (pid == 0)
-			execute_command(command);
+			execute_command(data, command);
 		waitpid(pid, &data->exit_status, 0);
 	}
 	else
@@ -31,8 +31,50 @@ int single_command(t_data *data, t_command *command)
 	return (1);
 }
 
-void    execute_command(t_command *command)
+char	*find_path(t_data *data, char *cmd)
 {
+	char	**dir;
+	char	*test_path;
+	char	*test_cmd;
+	int		i;
+
+	dir = fs_split(data, find_var(data->env, "PATH"), ':');
+	if (dir == NULL)
+		return (NULL);
+	i = -1;
+	while (dir[++i])
+	{
+		test_path = ft_strjoin(dir[i], "/");
+		test_cmd = ft_strjoin(test_path, cmd);
+		free(test_path);
+		test_path = NULL;
+		if (!access(test_cmd, F_OK))
+			break ;
+		free(test_cmd);
+		test_cmd = NULL;
+
+	}
+	cmd = fs_strdup(data, test_cmd);
+	free(test_cmd);
+	test_cmd = NULL;
+	return (cmd);
+}
+
+/* Question: Does reassigning command->argv[0] lead to a memory leak?
+				(because only 1 element of argv is reassigned) */
+
+void    execute_command(t_data *data, t_command *command)
+{
+
+	if (access(command->argv[0], F_OK))
+	{
+		command->argv[0] = find_path(data, command->argv[0]);
+		if (!command->argv[0])
+		{
+			printf("Minishell: Could not find command\n");
+			return ;
+		}
+	}
  /*   int stdout_cpy;
 
 	stdout_cpy = dup(STDOUT_FILENO);

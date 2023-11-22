@@ -84,7 +84,7 @@ void    check_builtins(t_data *data, t_command *command);
 
 /* commands_executor.c */
 int single_command(t_data *data, t_command *command);
-void    execute_command(t_command *command);
+void    execute_command(t_data *data, t_command *command);
 void    execute(t_data *data);
 
 /* error_exit.c */

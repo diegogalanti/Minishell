@@ -85,22 +85,22 @@ char    **add_mod_var(t_data *data, char **var, char *new_var)
 	return (ret);
 }
 
-/* find_var: iterates through environment variable list and checks if s is a variable
+/* find_var: iterates through environment variable list and checks if var_name is a variable
 	In case it is, it returns a pointer to the value of the variable. 
 	In case it is not, it returns a NULL pointer.*/
 
-char	*find_var(char **var, char *s)
+char	*find_var(char **var, char *var_name)
 {
 	int	i;
 	int	j;
 
 	i = -1;
 	j = 0;
-	if (!s)
+	if (!var_name || !var)
 		return (NULL);
 	while (var != NULL && var[++i] != NULL)
 	{
-		if (!ft_strvcmp(var[i], s))
+		if (!ft_strvcmp(var[i], var_name))
 		{
 			while (var[i][j] != '=')
 				j++;
