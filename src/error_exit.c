@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 14:44:27 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/20 09:59:23 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/21 11:10:33 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ void    free_data(t_data *data)
 		free(data->env);
 		data->env = NULL;
 	}*/
+	clear_history();
+	exit (0);
 }
 
 void    free_command(t_command *command)

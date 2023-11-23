@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/20 09:56:50 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/23 09:36:58 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,300 @@ void	skip_spaces(t_command *command, int *i)
 	}
 }
 
+/*
+
+Returns the difference from the length of the $VAR with the length of the value it holds.
+
+Have to put content inside double quotes as only $ can be interpreted as a special sign, other symbols like > cannot.
+
+*/
+int expand_var(t_command *command, char **env, int start, int end, int inside_quotes)
+{
+	char *env_var;
+	char *env_var_value;
+	char *tmp_cmd;
+	char old_size;
+
+	tmp_cmd = command->cmd_input;
+	old_size = ft_strlen(command->cmd_input);
+	env_var = ft_substr(command->cmd_input, start, (end - start) + 1);
+	env_var_value = find_var(env, &env_var[1]);
+	if (!env_var_value)
+	{
+		env_var_value = command_safe_malloc(command,1);
+		env_var_value[0] = 0;
+	}
+	if (!inside_quotes)
+	{
+		env_var_value = ft_strjoin("\"", env_var_value);
+		env_var_value = ft_strjoin(env_var_value, "\"");
+	}
+	tmp_cmd = ft_strjoin(ft_substr(command->cmd_input, 0, start), env_var_value);
+	command->cmd_input = ft_strjoin(tmp_cmd, ft_substr(command->cmd_input, end + 1, ft_strlen(command->cmd_input) - end));
+	printf("Trying to replace [%s] with [%s] resulted in [%s]\n", env_var, env_var_value, command->cmd_input);
+	return (ft_strlen(command->cmd_input) - old_size);
+}
+
+/* Returns the difference from the length of the $? with the length of the value it holds */
+int expand_exit_status(t_command *command, int es, int start, int end, int inside_quotes)
+{
+	char *env_var_value;
+	char *tmp_cmd;
+	char old_size;
+
+	tmp_cmd = command->cmd_input;
+	old_size = ft_strlen(command->cmd_input);
+	env_var_value = ft_itoa(es);
+	if (!inside_quotes)
+	{
+		env_var_value = ft_strjoin("\"", env_var_value);
+		env_var_value = ft_strjoin(env_var_value, "\"");
+	}
+	tmp_cmd = ft_strjoin(ft_substr(command->cmd_input, 0, start), env_var_value);
+	command->cmd_input = ft_strjoin(tmp_cmd, ft_substr(command->cmd_input, end + 1, ft_strlen(command->cmd_input) - end));
+	printf("Trying to replace [$?] with [%s] resulted in [%s]\n", env_var_value, command->cmd_input);
+	return (ft_strlen(command->cmd_input) - old_size);
+}
+
+// void build_redirections(t_command *command)
+// {
+	// int	i;
+	// int start_i;
+	// t_parse_status status;
+
+	// i = -1;
+	// start_i = 0;
+	// status = WAITING_FOR_RED;
+	// while (command->cmd_input[++i])
+	// {
+	// 	if (command->cmd_input[i] == '\'')
+	// 	{
+			
+	// 	}
+	// 	else if (command->cmd_input[i] == '\"')
+	// 	{
+			
+	// 	}
+	// 	else if (ft_isspace(command->cmd_input[i]))
+	// 	{
+			
+	// 	}
+	// 	else if (command->cmd_input[i] == '>')
+	// 	{
+			
+	// 	}
+	// 	else if (command->cmd_input[i] == '<')
+	// 	{
+			
+	// 	}
+	// 	else
+	// 	{
+			
+	// 	}
+	// }
+	// if (status == WAITING_FOR_SPACE)
+	// {
+		
+	// }
+// }
+
+void expand_vars(t_command *command, char **env, int es)
+{
+	int	i;
+	int start_i;
+	t_parse_status status;
+
+	i = -1;
+	start_i = 0;
+	status = WAITING_FOR_DOLLAR;
+	while (command->cmd_input[++i])
+	{
+		if (command->cmd_input[i] == '\'')
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				status = FOUND_SQOT_WFD;
+			else if (status == FOUND_SQOT_WFD)
+				status = WAITING_FOR_DOLLAR;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = FOUND_SQOT_WFD;
+			}
+			else if (status == WAITING_FOR_CHAR)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = FOUND_SQOT_WFD;
+			}
+			else if (status == FOUND_DQOT_WFD)
+				continue;
+			else if (status == FOUND_DQOT)
+				status = FOUND_DQOT_WFD;
+			else if (status == FOUND_DQOT_WFS)
+			{
+				i += expand_var(command, env, start_i, i - 1, 1);
+				status = FOUND_DQOT_WFD;
+			}
+		}
+		else if (command->cmd_input[i] == '\"')
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				status = FOUND_DQOT_WFD;
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = FOUND_DQOT_WFD;
+			}
+			else if (status == WAITING_FOR_CHAR)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = FOUND_DQOT_WFD;
+			}
+			else if (status == FOUND_DQOT_WFD)
+				status = WAITING_FOR_DOLLAR;
+			else if (status == FOUND_DQOT)
+				status = WAITING_FOR_DOLLAR;
+			else if (status == FOUND_DQOT_WFS)
+			{
+				i += expand_var(command, env, start_i, i - 1, 1);
+				status = WAITING_FOR_DOLLAR;
+			}
+		}
+		else if (command->cmd_input[i] == '?')
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				continue;
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = WAITING_FOR_DOLLAR;
+			}
+			else if (status == WAITING_FOR_CHAR)
+			{
+				i += expand_exit_status(command, es, start_i, i, 0);
+				status = WAITING_FOR_DOLLAR;
+			}
+			else if (status == FOUND_DQOT_WFD)
+				continue;
+			else if (status == FOUND_DQOT)
+			{
+				i += expand_exit_status(command, es, start_i, i, 1);
+				status = FOUND_DQOT_WFD;
+			}
+			else if (status == FOUND_DQOT_WFS)
+			{
+				i += expand_var(command, env, start_i, i - 1, 1);
+				status = FOUND_DQOT_WFD;
+			}
+		}
+		else if (ft_isspace(command->cmd_input[i]))
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				continue;
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = WAITING_FOR_DOLLAR;
+			}
+			else if (status == WAITING_FOR_CHAR)
+				status = WAITING_FOR_DOLLAR;
+			else if (status == FOUND_DQOT_WFD)
+				continue;
+			else if (status == FOUND_DQOT)
+				status = FOUND_DQOT_WFD;
+			else if (status == FOUND_DQOT_WFS)
+			{
+				i += expand_var(command, env, start_i, i - 1, 1);
+				status = FOUND_DQOT_WFD;
+			}
+		}
+		else if (command->cmd_input[i] == '$')
+		{
+			if (status == WAITING_FOR_DOLLAR)
+			{
+				start_i = i;
+				status = WAITING_FOR_CHAR;
+			}
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = WAITING_FOR_CHAR;
+				start_i = i;
+			}
+			else if (status == WAITING_FOR_CHAR)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = WAITING_FOR_CHAR;
+				start_i = i;
+			}
+			else if (status == FOUND_DQOT_WFD)
+			{
+				start_i = i;
+				status = FOUND_DQOT;
+			}
+			else if (status == FOUND_DQOT)
+				start_i = i;
+			else if (status == FOUND_DQOT_WFS)
+			{
+				i += expand_var(command, env, start_i, i - 1, 1);
+				status = FOUND_DQOT_WFD;
+				start_i = i;
+			}
+		}
+		else if (!ft_isalnum(command->cmd_input[i]) && command->cmd_input[i] != '_')
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				continue;
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				i += expand_var(command, env, start_i, i - 1, 0);
+				status = WAITING_FOR_DOLLAR;
+			}
+			else if (status == WAITING_FOR_CHAR)
+				status = WAITING_FOR_DOLLAR;
+			else if (status == FOUND_DQOT_WFD)
+				continue;
+			else if (status == FOUND_DQOT)
+				status = FOUND_DQOT_WFD;
+			else if (status == FOUND_DQOT_WFS)
+			{
+				i += expand_var(command, env, start_i, i - 1, 1);
+				status = FOUND_DQOT_WFD;
+			}
+		}
+		else
+		{
+			if (status == WAITING_FOR_DOLLAR)
+				continue;
+			else if (status == FOUND_SQOT_WFD)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+				continue;
+			else if (status == WAITING_FOR_CHAR)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_DQOT_WFD)
+				continue;
+			else if (status == FOUND_DQOT)
+				status = FOUND_DQOT_WFS;
+			else if (status == FOUND_DQOT_WFS)
+				continue;
+		}
+	}
+	if (status == WAITING_FOR_SPACE)
+	{
+		i += expand_var(command, env, start_i, i - 1, 0);
+	}
+}
+
 void build_argv(t_command *command)
 {
 	int	i;
@@ -43,7 +337,10 @@ void build_argv(t_command *command)
 		if (command->cmd_input[i] == '\"')
 		{
 			if (status == WAITING_FOR_CHAR)
+			{
+				start_i = i;
 				status = FOUND_DQOT_WFC;
+			}
 			else if (status == FOUND_SQOT_WFC)
 				status = FOUND_SQOT;
 			else if (status == FOUND_SQOT)
@@ -58,7 +355,10 @@ void build_argv(t_command *command)
 		else if (command->cmd_input[i] == '\'')
 		{
 			if (status == WAITING_FOR_CHAR)
+			{
+				start_i = i;
 				status = FOUND_SQOT_WFC;
+			}
 			else if (status == FOUND_SQOT_WFC)
 				status = WAITING_FOR_CHAR;
 			else if (status == FOUND_SQOT)
@@ -94,7 +394,10 @@ void build_argv(t_command *command)
 		else
 		{
 			if (status == WAITING_FOR_CHAR)
+			{
+				start_i = i;
 				status = WAITING_FOR_SPACE;
+			}
 			else if (status == FOUND_SQOT_WFC)
 				status = FOUND_SQOT;
 			else if (status == FOUND_DQOT_WFC)
@@ -214,13 +517,18 @@ void	create_command(t_data *data, int start, int end)
 		ft_lstadd_back(&data->commands, ft_lstnew(command));
 	command->cmd_input = ft_substr(data->user_input, start, end - start);
 	command->free_list = data->free_list;
+	command->stdin = 0;
+	command->stdout = 0;
+	command->append_mode = -1;
 	printf("Command input = [%s]\n", command->cmd_input);
+	expand_vars(command, data->env, data->exit_status);
+	//build_redirections(command);
 	alloc_argv(command);
 	build_argv(command);
 	add_type(command);
 }
 
-//I HAVE TO HANDLE COMPLETELY EMPTY COMMANDS, IT SHOULD NOT TRY TO RUN OTHER COMMAND.EG. "echo abc| |echo cde" should just return 258 and print "-bash: syntax error near unexpected token `|'"
+//WHEN 258 is returned have to check outside to not handle any already interpreted command, it should just print error
 int	split_commands(t_data *data)
 {
 	int	i;
@@ -318,10 +626,15 @@ int	split_commands(t_data *data)
 	return (0);
 }
 
-void	parse_input(t_data *data)
+void	init_commands(t_data *data)
 {
 	data->nb_cmds = 0;
-	data->commands = NULL;
+	data->commands = 0;
+}
+
+void	parse_input(t_data *data)
+{
+	init_commands(data);
 	split_commands(data);
 	
 	//code do split user_input into cmd_input
