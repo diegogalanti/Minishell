@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/23 09:30:29 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/23 09:36:58 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,47 +82,47 @@ int expand_exit_status(t_command *command, int es, int start, int end, int insid
 	return (ft_strlen(command->cmd_input) - old_size);
 }
 
-void build_redirections(t_command *command)
-{
-	int	i;
-	int start_i;
-	t_parse_status status;
+// void build_redirections(t_command *command)
+// {
+	// int	i;
+	// int start_i;
+	// t_parse_status status;
 
-	i = -1;
-	start_i = 0;
-	status = WAITING_FOR_RED;
-	while (command->cmd_input[++i])
-	{
-		if (command->cmd_input[i] == '\'')
-		{
+	// i = -1;
+	// start_i = 0;
+	// status = WAITING_FOR_RED;
+	// while (command->cmd_input[++i])
+	// {
+	// 	if (command->cmd_input[i] == '\'')
+	// 	{
 			
-		}
-		else if (command->cmd_input[i] == '\"')
-		{
+	// 	}
+	// 	else if (command->cmd_input[i] == '\"')
+	// 	{
 			
-		}
-		else if (ft_isspace(command->cmd_input[i]))
-		{
+	// 	}
+	// 	else if (ft_isspace(command->cmd_input[i]))
+	// 	{
 			
-		}
-		else if (command->cmd_input[i] == '>')
-		{
+	// 	}
+	// 	else if (command->cmd_input[i] == '>')
+	// 	{
 			
-		}
-		else if (command->cmd_input[i] == '<')
-		{
+	// 	}
+	// 	else if (command->cmd_input[i] == '<')
+	// 	{
 			
-		}
-		else
-		{
+	// 	}
+	// 	else
+	// 	{
 			
-		}
-	}
-	if (status == WAITING_FOR_SPACE)
-	{
+	// 	}
+	// }
+	// if (status == WAITING_FOR_SPACE)
+	// {
 		
-	}
-}
+	// }
+// }
 
 void expand_vars(t_command *command, char **env, int es)
 {

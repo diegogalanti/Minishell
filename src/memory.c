@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 17:51:58 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/19 20:14:31 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/23 09:36:16 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int	close_all_fd(t_data *data)
 	{
 		while (++i < data->nb_cmds - 1)
 		{
-			if (close(data->pipe[i]) < 0)
+			if (close(*data->pipe[i]) < 0)
 				printf("Minishell: Error: closing pipe failed\n");
 		}
 	}
