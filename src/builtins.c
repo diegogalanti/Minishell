@@ -19,7 +19,7 @@
 	TO DO: ; -> after ";" is interpreted as command (Do we have to implement that?)
 	*/
 
-void	builtin_echo(t_command *command, int fd_out)
+void	builtin_echo(t_command *command)
 {
 	int	i;
 	int	n;
@@ -34,12 +34,12 @@ void	builtin_echo(t_command *command, int fd_out)
 	while (command->argv[i] != NULL)
 	{
 		if (i > 1 + n)
-			ft_putchar_fd(32, fd_out);
-		ft_putstr_fd(command->argv[i], fd_out);
+			printf("%c", 32);
+		printf("%s",command->argv[i]);
 		i++;
 	}
 	if (n == 0)
-		ft_putchar_fd('\n', fd_out);
+		printf("\n");
 }
 
 /* builtin_pwd: mimicks the behaviour of pwd in bash
@@ -89,7 +89,7 @@ void	builtin_cd(t_data *data, t_command *command)
 		printf("minishell: cd: path not found\n");
 }
 
-void	print_export(char **env, int fd)
+void	print_export(char **env)
 {
 	int	i;
 	int	j;
@@ -97,16 +97,15 @@ void	print_export(char **env, int fd)
 	i = -1;
 	while (env[++i] != NULL)
 	{
-		ft_putstr_fd("declare -x ", fd);
+		printf("declare -x ");
 		j = -1;
 		while (env[i][++j] != '=')
-			ft_putchar_fd(env[i][j], fd);
-		ft_putchar_fd(env[i][j++], fd);
-		ft_putchar_fd(34, fd);
+			printf("%c", env[i][j]);
+		printf("%c",env[i][j++]);
+		printf("%c", 34);
 		while (env[i][++j] != '\0')
-			ft_putchar_fd(env[i][j], fd);
-		ft_putchar_fd(34, fd);
-		ft_putchar_fd('\n', fd);
+			printf("%c",env[i][j]);
+		printf("%c\n", 34);
 	}
 }
 
@@ -140,14 +139,14 @@ int	check_export_var(char *str)
 
 /* TO DO: change variables*/
 
-void	builtin_export(t_data *data, t_command *command, int fd)
+void	builtin_export(t_data *data, t_command *command)
 {
 	int	i;
 
 	i = 0;
 	if (command->argv[1] == NULL && data->env)
 	{
-		print_export(data->env, fd);
+		print_export(data->env);
 		return ;
 	}
 	while (command->argv[++i] != NULL)
@@ -203,9 +202,9 @@ void	builtin_env(t_data *data, t_command *command)
 /* builtin_exit: exits the shell
 		if arguments are given it does not exit but prints error message*/
 
-void	builtin_exit(t_data *data, t_command *command, int fd)
+void	builtin_exit(t_data *data, t_command *command)
 {
-	ft_putstr_fd("exit\n", fd);
+	printf("exit\n");
 	if (command->argv[1])
 		printf("minishell: exit: too many arguments\n");
 	else
@@ -221,19 +220,19 @@ void	builtin_exit(t_data *data, t_command *command, int fd)
 void    check_builtins(t_data *data, t_command *command)
 {
 	if (command->cmd == ECHO)
-		builtin_echo(command, 1);
+		builtin_echo(command);
 	else if(command->cmd == CD)
 		builtin_cd(data, command);
 	else if (command->cmd == PWD)
 		builtin_pwd();
 	else if (command->cmd == EXPORT)
-		builtin_export(data, command, 1);
+		builtin_export(data, command);
 	else if (command->cmd == UNSET)
 		builtin_unset(data, command);
 	else if (command->cmd == ENV)
 		builtin_env(data, command);
 	else if (command->cmd == EXIT)
-		builtin_exit(data, command, 1);
+		builtin_exit(data, command);
 	
 	
 }

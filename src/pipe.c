@@ -42,7 +42,7 @@ int	set_fd(t_data *data, t_command *command, int i)
 		command->fd_in = STDIN_FILENO;
 	else
 		command->fd_in = data->pipe[i - 1][0];
-	if (i == data->nb_cmds)
+	if (i == data->nb_cmds - 1)
 		command->fd_out	= STDOUT_FILENO;
 	else
 		command->fd_out = data->pipe[i][1];
@@ -69,14 +69,19 @@ int	child_process(t_data *data, t_command *command, int i)
 	if (command->cmd == EXEC)
 		execute_command(data, command);
 	else
+	{
+		redirect(data, command);
 		check_builtins(data, command);
+	}
 	exit (1);
 }
 
 int	pipe_commands(t_data *data)
 {
 	int	i;
+	t_list *command;
 
+	command = data->commands;
 	if (!creat_pipe(data))
 		return (printf("Minishell: Error: Could not create pipes\n"), 0);
 	i = -1;
@@ -85,8 +90,8 @@ int	pipe_commands(t_data *data)
 		if ((data->pid[i] = fork()) < 0)
 			return (printf("Minishell: Error: Fork failed\n"), 0);
 		if (data->pid[i] == 0)
-			child_process(data, data->commands->content, i);
-		data->commands = data->commands->next;
+			child_process(data, command->content, i);
+		command = command->next;
 	}
 	close_all_fd(data);
 	i = -1;

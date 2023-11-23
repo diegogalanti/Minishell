@@ -82,6 +82,7 @@ typedef struct s_data
 	char	**shvar;	/*these are the shell variables (only present in this shell)*/
 	int		**pipe;
 	int		*pid;
+	int		stdout_cpy;
 	int		exit_status;
 }			t_data;
 
@@ -129,6 +130,7 @@ char	*find_var(char **var, char *s);
 
 /* redirections.c */
 int	here_doc(t_data *data);
+int	redirect(t_data *data, t_command *command);
 
 /* utils.c */
 char	*fs_strdup(t_data *data, char *s);

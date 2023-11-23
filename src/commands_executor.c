@@ -65,8 +65,6 @@ char	*find_path(t_data *data, char *cmd)
 
 int   execute_command(t_data *data, t_command *command)
 {
-	int stdout_cpy;
-
 	if (!command || !command->argv || !command->argv[0])
 	{
 		close(command->fd_in);
@@ -79,13 +77,9 @@ int   execute_command(t_data *data, t_command *command)
 		if (!command->argv[0])
 			return (printf("Minishell: Could not find command\n"), 127);
 	}
-	stdout_cpy = dup(STDOUT_FILENO);
-	dup2(command->fd_in, STDIN_FILENO);
-	dup2(command->fd_out, STDOUT_FILENO);
-	close(command->fd_in);
-	close(command->fd_out);
+	redirect(data, command);
 	execve(command->argv[0], command->argv, NULL);
-	dup2(stdout_cpy, STDIN_FILENO);
+	dup2(data->stdout_cpy, STDIN_FILENO);
 	close(command->fd_out);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
 	exit (errno);

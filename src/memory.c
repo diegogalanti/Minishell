@@ -96,7 +96,9 @@ int	close_all_fd(t_data *data)
 	{
 		while (++i < data->nb_cmds - 1)
 		{
-			if (close(*data->pipe[i]) < 0)
+			if (close(data->pipe[i][0]) < 0)
+				printf("Minishell: Error: closing pipe failed\n");
+			if (close(data->pipe[i][1]) < 0)
 				printf("Minishell: Error: closing pipe failed\n");
 		}
 	}
