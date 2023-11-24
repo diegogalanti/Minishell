@@ -10,3 +10,8 @@ input "" should result in
 Right now, the parser does not set command->argv 
 
  " " works perfectly.
+
+Fix:
+open file descriptors when piping
+
+          ls | grep minishell
