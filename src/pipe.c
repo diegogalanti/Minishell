@@ -63,7 +63,7 @@ int	set_fd(t_data *data, t_command *command, int i)
 	return (1);
 }
 
-int	child_process(t_data *data, t_command *command, int i)
+void	child_process(t_data *data, t_command *command, int i)
 {
 	set_fd(data, command, i);
 	if (command->cmd == EXEC)
@@ -73,7 +73,7 @@ int	child_process(t_data *data, t_command *command, int i)
 		redirect(data, command);
 		check_builtins(data, command);
 	}
-	exit (1);
+	exit_child (1, data);
 }
 
 int	pipe_commands(t_data *data)

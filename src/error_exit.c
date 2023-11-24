@@ -67,3 +67,10 @@ void	free_exit(t_data *data)
 	clear_history();
 	exit (0);
 }
+
+void	exit_child(int exit_status, t_data *data)
+{
+	close_all_fd(data);
+	clear_history();
+	exit (exit_status);
+}

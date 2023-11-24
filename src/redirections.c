@@ -60,14 +60,16 @@
 
 int	redirect(t_data *data, t_command *command)
 {
-	data->stdout_cpy = dup(STDOUT_FILENO);
-	if (command->fd_in != STDIN_FILENO)
+	if (!command->stdin && !command->stdout)
+		return (0);
+	if (command->stdin && command->fd_in != STDIN_FILENO)
 	{
 		dup2(command->fd_in, STDIN_FILENO);
 		close(command->fd_in);
 	}
-	if (command->fd_out != STDOUT_FILENO)
+	if (command->stdout && command->fd_out != STDOUT_FILENO)
 	{
+		data->stdout_cpy = dup(STDOUT_FILENO);
 		dup2(command->fd_out, STDOUT_FILENO);
 		close(command->fd_out);
 	}

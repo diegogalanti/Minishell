@@ -99,7 +99,7 @@ int		close_all_fd(t_data *data);
 /* commands_executor.c */
 char	*find_path(t_data *data, char *cmd);
 int 	single_command(t_data *data, t_command *command);
-int		execute_command(t_data *data, t_command *command);
+void	execute_command(t_data *data, t_command *command);
 void    execute(t_data *data);
 
 /* builtins.c */
@@ -108,12 +108,13 @@ void    check_builtins(t_data *data, t_command *command);
 /* pipe.c */
 int	creat_pipe(t_data *data);
 int	pipe_commands(t_data *data);
-int	child_process(t_data *data, t_command *command, int i);
+void	child_process(t_data *data, t_command *command, int i);
 
 /* error_exit.c */
 void	free_data(t_data *data);
 void    free_exit(t_data *data);
 void    free_command(t_command *command);
+void	exit_child(int exit_status, t_data *data);
 
 
 

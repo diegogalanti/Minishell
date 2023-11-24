@@ -54,6 +54,8 @@ char	*find_path(t_data *data, char *cmd)
 		test_cmd = NULL;
 
 	}
+	if (dir[i] == NULL)
+		return (cmd);
 	cmd = fs_strdup(data, test_cmd);
 	free(test_cmd);
 	test_cmd = NULL;
@@ -63,30 +65,38 @@ char	*find_path(t_data *data, char *cmd)
 /* Question: Does reassigning command->argv[0] lead to a memory leak?
 				(because only 1 element of argv is reassigned) */
 
-int   execute_command(t_data *data, t_command *command)
+void   execute_command(t_data *data, t_command *command)
 {
 	if (!command || !command->argv || !command->argv[0])
 	{
 		close(command->fd_in);
 		close(command->fd_out);
-		return (127);
+		printf("%s: command not found\n", command->argv[0]);
+		exit_child (127, data);
 	}
 	if (access(command->argv[0], F_OK))
 	{
 		command->argv[0] = find_path(data, command->argv[0]);
-		if (!command->argv[0])
-			return (printf("Minishell: Could not find command\n"), 127);
+		if (access(command->argv[0], F_OK))
+		{
+			printf("%s: command not found\n", command->argv[0]);
+			exit_child (127, data);
+		}
 	}
+	//command->fd_in = 0;
+	//command->fd_out = 0;
 	redirect(data, command);
 	execve(command->argv[0], command->argv, NULL);
 	dup2(data->stdout_cpy, STDIN_FILENO);
 	close(command->fd_out);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
-	exit (errno);
+	exit_child (errno, data);
 }
 
 void    execute(t_data *data)
 {
+	if (!data->nb_cmds)
+		return ;
 	//if (redirect(data) < 0)
 	//	return (-1);
 	if (data->nb_cmds < 2 && data->commands)
