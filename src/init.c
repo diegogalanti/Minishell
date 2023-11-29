@@ -44,6 +44,7 @@ void   *init_data(char **env)
 	data->commands = NULL;
 	data->nb_cmds = 0;
 	data->pid = NULL;
+	data->pipe = NULL;
 	data->exit_status = 0;
 	if (!init_env(data, env))
 		return (printf("Error: Could not initialize environment variable\n"),

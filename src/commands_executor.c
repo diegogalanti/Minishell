@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/17 15:58:32 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:01:55 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int single_command(t_data *data, t_command *command)
 		waitpid(pid, &data->exit_status, 0);
 	}
 	else
-	  check_builtins(data, command);
+	  check_builtins(data, command, -2);
 	return (1);
 }
 
@@ -87,7 +87,7 @@ void   execute_command(t_data *data, t_command *command)
 	//command->fd_out = 0;
 	redirect(data, command);
 	execve(command->argv[0], command->argv, NULL);
-	dup2(data->stdout_cpy, STDIN_FILENO);
+	dup2(data->stdout_cpy, STDOUT_FILENO);
 	close(command->fd_out);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
 	exit_child (errno, data);

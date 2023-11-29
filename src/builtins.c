@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:46:01 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/13 13:46:05 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:07:36 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,11 +202,23 @@ void	builtin_env(t_data *data, t_command *command)
 /* builtin_exit: exits the shell
 		if arguments are given it does not exit but prints error message*/
 
-void	builtin_exit(t_data *data, t_command *command)
+void	builtin_exit(t_data *data, t_command *command, int i)
 {
 	printf("exit\n");
+	if (data->pipe && i >= 0)
+	{
+		if (command->argv[1] && data->pid[i] == 0)
+		{
+			dup2(data->stdout_cpy, STDOUT_FILENO);
+			close(data->stdout_cpy);
+			printf("minishell: exit: too many arguments\n");
+			exit_child(1, data);
+		}
+		else
+			exit_child(0, data);
+	}	
 	if (command->argv[1])
-		printf("minishell: exit: too many arguments\n");
+                printf("minishell: exit: too many arguments\n");
 	else
 		free_exit(data);
 }
@@ -217,7 +229,7 @@ void	builtin_exit(t_data *data, t_command *command)
 	TO DO: Now all the functions write to stdout. As soon as redirections are done,
 	change 1 to fd.*/
 
-void    check_builtins(t_data *data, t_command *command)
+void    check_builtins(t_data *data, t_command *command, int i)
 {
 	if (command->cmd == ECHO)
 		builtin_echo(command);
@@ -232,7 +244,7 @@ void    check_builtins(t_data *data, t_command *command)
 	else if (command->cmd == ENV)
 		builtin_env(data, command);
 	else if (command->cmd == EXIT)
-		builtin_exit(data, command);
+		builtin_exit(data, command, i);
 	
 	
 }

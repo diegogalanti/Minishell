@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 14:44:27 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/21 11:10:33 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/28 17:11:23 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ static void	clear_list(void *list)
 
 void    free_data(t_data *data)
 {
-//	int	i;
-
 	if (data && data->free_list)
 	{
 		ft_lstclear(&(data->free_list), clear_list);
@@ -43,8 +41,6 @@ void    free_data(t_data *data)
 		free(data->env);
 		data->env = NULL;
 	}*/
-	clear_history();
-	exit (0);
 }
 
 void    free_command(t_command *command)
@@ -63,14 +59,21 @@ void    free_command(t_command *command)
 
 void	free_exit(t_data *data)
 {
+	int	exit_status;
+
+	exit_status = data->exit_status;
+	close_all_fd(data);
 	free_data(data);
 	clear_history();
-	exit (0);
+	exit (exit_status);
 }
 
 void	exit_child(int exit_status, t_data *data)
 {
 	close_all_fd(data);
+	close(0);
+	close(1);
+	close(2);
 	clear_history();
 	exit (exit_status);
 }

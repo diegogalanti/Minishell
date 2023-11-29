@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/23 09:35:06 by digallar         ###   ########.fr       */
+/*   Updated: 2023/11/28 17:58:46 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	execute_command(t_data *data, t_command *command);
 void    execute(t_data *data);
 
 /* builtins.c */
-void    check_builtins(t_data *data, t_command *command);
+void    check_builtins(t_data *data, t_command *command, int i);
 
 /* pipe.c */
 int	creat_pipe(t_data *data);
