@@ -15,16 +15,19 @@
 int single_command(t_data *data, t_command *command)
 {
 	int pid;
+	int	child_exit_status;
 
 	if (!command->argv[0])
 		return (0);
 	if (command->cmd == EXEC)
 	{
+		data->stdout_cpy = dup(STDOUT_FILENO);
 		if ((pid = fork()) < 0)
 			return (printf("minishell: Error: fork process\n"), 0);
 		if (pid == 0)
 			execute_command(data, command);
-		waitpid(pid, &data->exit_status, 0);
+		waitpid(pid, &child_exit_status, 0);
+		get_child_exit_status(data, child_exit_status);
 	}
 	else
 	  check_builtins(data, command, -2);
@@ -62,6 +65,7 @@ char	*find_path(t_data *data, char *cmd)
 	return (cmd);
 }
 
+
 /* Question: Does reassigning command->argv[0] lead to a memory leak?
 				(because only 1 element of argv is reassigned) */
 
@@ -69,28 +73,27 @@ void   execute_command(t_data *data, t_command *command)
 {
 	if (!command || !command->argv || !command->argv[0])
 	{
-		close(command->fd_in);
-		close(command->fd_out);
+		//dup2(data->stdout_cpy, STDOUT_FILENO);
 		printf("%s: command not found\n", command->argv[0]);
-		exit_child (127, data);
+		exit_child (data, 127);
 	}
 	if (access(command->argv[0], F_OK))
 	{
 		command->argv[0] = find_path(data, command->argv[0]);
 		if (access(command->argv[0], F_OK))
 		{
+			//dup2(data->stdout_cpy, STDOUT_FILENO);
 			printf("%s: command not found\n", command->argv[0]);
-			exit_child (127, data);
+			exit_child (data, 127);
 		}
 	}
 	//command->fd_in = 0;
 	//command->fd_out = 0;
-	redirect(data, command);
+	redirect(command);
 	execve(command->argv[0], command->argv, NULL);
 	dup2(data->stdout_cpy, STDOUT_FILENO);
-	close(command->fd_out);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
-	exit_child (errno, data);
+	exit_child (data, errno);
 }
 
 void    execute(t_data *data)

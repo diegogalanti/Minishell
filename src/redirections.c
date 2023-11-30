@@ -58,20 +58,19 @@
 	}
 }*/
 
-int	redirect(t_data *data, t_command *command)
+int	redirect(t_command *command)
 {
 	//if (!command->stdin && !command->stdout)
 	//	return (0);
-	if (command->fd_in != STDIN_FILENO)
+	if (command->fd_in != STDIN_FILENO && command->fd_in >= 0)
 	{
 		dup2(command->fd_in, STDIN_FILENO);
-		close(command->fd_in);
+		//close_fd(command->fd_in);
 	}
-	if (command->fd_out != STDOUT_FILENO)
+	if (command->fd_out != STDOUT_FILENO && command->fd_out >= 0)
 	{
-		data->stdout_cpy = dup(STDOUT_FILENO);
 		dup2(command->fd_out, STDOUT_FILENO);
-		close(command->fd_out);
+		//close_fd(command->fd_out);
 	}
 	return (1);
 }

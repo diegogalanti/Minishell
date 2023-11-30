@@ -87,6 +87,19 @@ void	*command_safe_malloc(t_command *command, size_t size)
 	return (ptr);
 }
 
+void	close_fd(int *fd)
+{
+	if (*fd != -1)
+	{
+		if (close(*fd) < 0)
+			printf("Minishell: Error: closing fd %i failed\n", *fd);
+		*fd = -1;
+	}
+}
+
+/* closes all file descriptors 
+	so far, only the ones for the pipes
+	To Do: close heredoc & files from redirection*/
 int	close_all_fd(t_data *data)
 {
 	int	i;
@@ -97,16 +110,11 @@ int	close_all_fd(t_data *data)
 		while (++i < data->nb_cmds - 1)
 		{
 			if (data->pipe[i][0])
-			{
-				if (close(data->pipe[i][0]) < 0)
-					printf("Minishell: Error: closing pipe failed\n");
-			}
+				close_fd(&data->pipe[i][0]);
 			if (data->pipe[i][1])
-			{
-				if (close(data->pipe[i][1]) < 0)
-					printf("Minishell: Error: closing pipe failed\n");
-			}
+				close_fd(&data->pipe[i][1]);
 		}
 	}
+	close_fd(&data->stdout_cpy);
 	return (1);
 }

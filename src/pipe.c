@@ -33,6 +33,7 @@ int	creat_pipe(t_data *data)
 		if (pipe(data->pipe[i]) < 0)
 			return (0);
 	}
+	data->stdout_cpy = dup(STDOUT_FILENO);
 	return (1);
 }
 
@@ -50,15 +51,9 @@ int	set_fd(t_data *data, t_command *command, int i)
 	while (++i < data->nb_cmds - 1)
 	{
 		if (data->pipe[i][0] != command->fd_in)
-		{
-			if (close(data->pipe[i][0]) < 0)
-				printf("Minishell: Error: close fd failed\n");
-		}
+			close_fd(&data->pipe[i][0]);
 		if (data->pipe[i][1] != command->fd_out)
-		{
-			if (close(data->pipe[i][1]) < 0)
-				printf("Minishell: Error: close fd failed\n");
-		}
+			close_fd(&data->pipe[i][1]);
 	}
 	return (1);
 }
@@ -66,21 +61,34 @@ int	set_fd(t_data *data, t_command *command, int i)
 void	child_process(t_data *data, t_command *command, int i)
 {
 	set_fd(data, command, i);
-	printf("fd_in: %i, fd_out: %i", command->fd_in, command->fd_out);
-	redirect(data, command);
+	//printf("fd_in: %i, fd_out: %i\n", command->fd_in, command->fd_out);
 	if (command->cmd == EXEC)
 		execute_command(data, command);
 	else
 	{
-		redirect(data, command);
+		redirect(command);
 		check_builtins(data, command, i);
 	}
-	exit_child (1, data);
+	exit_child (data, 1);
+}
+
+/* get_child_exit_status: stores the childs exit status in data->exit_status with which shell exits
+	The child's exit status is only stored if child exited normally (checked with macro WIFEXITED)
+	If it exited normally, the child's status is retrieved with the macro WEXITSTATUS*/
+
+void	get_child_exit_status(t_data *data, int child_exit_status)
+{
+	if (WIFEXITED(child_exit_status))
+	{
+		data->exit_status = WEXITSTATUS(child_exit_status);
+		//printf("Exit status of child was: %i, %i\n", child_exit_status, data->exit_status);
+	}
 }
 
 int	pipe_commands(t_data *data)
 {
 	int	i;
+	int	child_exit_status;
 	t_list *command;
 
 	command = data->commands;
@@ -98,6 +106,9 @@ int	pipe_commands(t_data *data)
 	close_all_fd(data);
 	i = -1;
 	while (++i < data->nb_cmds)
-		waitpid(0, &data->exit_status, 0);
+	{
+		waitpid(0, &child_exit_status, 0);
+		get_child_exit_status(data, child_exit_status);
+	}
 	return (1);
 }

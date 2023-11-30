@@ -32,6 +32,9 @@ int	init_env(t_data *data, char **env)
 	return (1);
 }
 
+/* data struct is initialized
+	stdout_cpy is set to -1 so that it will not attempt to be close if unititialized*/
+
 void   *init_data(char **env)
 {
 	t_data	*data;
@@ -46,6 +49,7 @@ void   *init_data(char **env)
 	data->pid = NULL;
 	data->pipe = NULL;
 	data->exit_status = 0;
+	data->stdout_cpy = -1;
 	if (!init_env(data, env))
 		return (printf("Error: Could not initialize environment variable\n"),
 				free_exit(data), (void *) 0);

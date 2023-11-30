@@ -68,12 +68,9 @@ void	free_exit(t_data *data)
 	exit (exit_status);
 }
 
-void	exit_child(int exit_status, t_data *data)
+void	exit_child(t_data *data, int exit_status)
 {
 	close_all_fd(data);
-	close(0);
-	close(1);
-	close(2);
 	clear_history();
 	exit (exit_status);
 }

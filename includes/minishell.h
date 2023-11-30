@@ -95,6 +95,7 @@ void	*safe_malloc(t_data *data, size_t size);
 void	*free_arr_str(char **str);
 void	*command_safe_malloc(t_command *command, size_t size);
 int		close_all_fd(t_data *data);
+void	close_fd(int *fd);
 
 /* commands_executor.c */
 char	*find_path(t_data *data, char *cmd);
@@ -109,12 +110,13 @@ void    check_builtins(t_data *data, t_command *command, int i);
 int	creat_pipe(t_data *data);
 int	pipe_commands(t_data *data);
 void	child_process(t_data *data, t_command *command, int i);
+void	get_child_exit_status(t_data *data, int child_exit_status);
 
 /* error_exit.c */
 void	free_data(t_data *data);
 void    free_exit(t_data *data);
 void    free_command(t_command *command);
-void	exit_child(int exit_status, t_data *data);
+void	exit_child(t_data *data, int exit_status);
 
 
 
@@ -131,7 +133,7 @@ char	*find_var(char **var, char *s);
 
 /* redirections.c */
 int	here_doc(t_data *data);
-int	redirect(t_data *data, t_command *command);
+int	redirect(t_command *command);
 
 /* utils.c */
 char	*fs_strdup(t_data *data, char *s);

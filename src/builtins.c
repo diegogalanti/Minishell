@@ -212,10 +212,10 @@ void	builtin_exit(t_data *data, t_command *command, int i)
 			dup2(data->stdout_cpy, STDOUT_FILENO);
 			close(data->stdout_cpy);
 			printf("minishell: exit: too many arguments\n");
-			exit_child(1, data);
+			exit_child(data, 1);
 		}
 		else
-			exit_child(0, data);
+			exit_child(data, 0);
 	}	
 	if (command->argv[1])
                 printf("minishell: exit: too many arguments\n");
