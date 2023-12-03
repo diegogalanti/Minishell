@@ -26,3 +26,7 @@ This creates a xyz file with "sample text" inside. However it will also create a
 echo "sample text" > abc > xyz
 
 Question: Do we want to replicate that behavior? If so, I think we could create an struct with specific data regarding redirections and in the command struct include a linked list of this struct. Maybe it is an overkill.
+
+Fix 4:
+
+Right now the behavior for open single/double quotes is quite unpredictable. From the subject we dont have to manage it, but to avoid bigger problems maybe I can print a parser error and abort the process.
