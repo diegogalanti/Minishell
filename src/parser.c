@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/11/30 11:59:35 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2023/12/04 11:03:46 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,47 +82,231 @@ int expand_exit_status(t_command *command, int es, int start, int end, int insid
 	return (ft_strlen(command->cmd_input) - old_size);
 }
 
-// void build_redirections(t_command *command)
-// {
-	// int	i;
-	// int start_i;
-	// t_parse_status status;
+int	create_limiter(t_command *command, int start, int end)
+{
+	int	i;
+	int old_size;
 
-	// i = -1;
-	// start_i = 0;
-	// status = WAITING_FOR_RED;
-	// while (command->cmd_input[++i])
-	// {
-	// 	if (command->cmd_input[i] == '\'')
-	// 	{
-			
-	// 	}
-	// 	else if (command->cmd_input[i] == '\"')
-	// 	{
-			
-	// 	}
-	// 	else if (ft_isspace(command->cmd_input[i]))
-	// 	{
-			
-	// 	}
-	// 	else if (command->cmd_input[i] == '>')
-	// 	{
-			
-	// 	}
-	// 	else if (command->cmd_input[i] == '<')
-	// 	{
-			
-	// 	}
-	// 	else
-	// 	{
-			
-	// 	}
-	// }
-	// if (status == WAITING_FOR_SPACE)
-	// {
-		
-	// }
-// }
+	i = start;
+	old_size = ft_strlen(command->cmd_input);
+	while (1)
+	{
+		if (command->cmd_input[i] != '<' && command->cmd_input[i] != '>' && !ft_isspace(command->cmd_input[i]))
+			break;
+		i++;
+	}
+	command->limiter = ft_substr(command->cmd_input, i, end - i);
+	command->cmd_input = ft_strjoin(ft_substr(command->cmd_input, 0, start), ft_substr(command->cmd_input, end, ft_strlen(command->cmd_input) - end));
+	command->found_limiter = 0;
+	printf("Limiter = [%s]\n", command->limiter);
+	return (ft_strlen(command->cmd_input) - old_size);
+}
+
+int	create_redirection(t_command *command, int start, int end)
+{
+	int	i;
+	int type;
+	int old_size;
+
+	if (command->found_limiter == 1)
+		return create_limiter(command, start, end);
+	i = start;
+	type = -1;
+	old_size = ft_strlen(command->cmd_input);
+	while (1)
+	{
+		if (command->cmd_input[i] == '<')
+			type = 0;
+		else if(command->cmd_input[i] == '>')
+			type = 1;
+		else if (!ft_isspace(command->cmd_input[i]))
+			break;
+		i++;
+	}
+	if (type == 0)
+	{
+		command->stdin = ft_substr(command->cmd_input, i, end - i);
+		printf("Redirection input = [%s]\n", command->stdin);
+	}
+	else if (type == 1)
+	{
+		command->stdout = ft_substr(command->cmd_input, i, end - i);
+		printf("Redirection output = [%s]\n", command->stdout);
+	}
+	command->cmd_input = ft_strjoin(ft_substr(command->cmd_input, 0, start), ft_substr(command->cmd_input, end, ft_strlen(command->cmd_input) - end));
+	return (ft_strlen(command->cmd_input) - old_size);
+}
+
+int build_redirections(t_command *command)
+{
+	int	i;
+	int start_i;
+	t_parse_status status;
+
+	i = -1;
+	start_i = 0;
+	status = WAITING_FOR_RED;
+	while (command->cmd_input[++i])
+	{
+		if (command->cmd_input[i] == '\'')
+		{
+			if (status == WAITING_FOR_RED)
+				status = FOUND_SQOT;
+			else if (status == FOUND_SQOT)
+				status = WAITING_FOR_RED;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == FOUND_IRED)
+				status = FOUND_SQOT_WFS;
+			else if (status == FOUND_ORED)
+				status = FOUND_SQOT_WFS;
+			else if (status == FOUND_SQOT_WFS)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_DQOT_WFS)
+				continue;
+			else if (status == WAITING_FOR_CHAR)
+				status = FOUND_SQOT_WFS;
+			else if (status == WAITING_FOR_SPACE)
+				status = FOUND_SQOT_WFS;
+		}
+		else if (command->cmd_input[i] == '\"')
+		{
+			if (status == WAITING_FOR_RED)
+				status = FOUND_DQOT;
+			else if (status == FOUND_DQOT)
+				status = WAITING_FOR_RED;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_IRED)
+				status = FOUND_DQOT_WFS;
+			else if (status == FOUND_ORED)
+				status = FOUND_DQOT_WFS;
+			else if (status == FOUND_DQOT_WFS)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_SQOT_WFS)
+				continue;
+			else if (status == WAITING_FOR_CHAR)
+				status = FOUND_DQOT_WFS;
+			else if (status == WAITING_FOR_SPACE)
+				status = FOUND_DQOT_WFS;
+		}
+		else if (ft_isspace(command->cmd_input[i]))
+		{
+			if (status == WAITING_FOR_RED)
+				continue;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_IRED)
+				status = WAITING_FOR_CHAR;
+			else if (status == FOUND_ORED)
+				status = WAITING_FOR_CHAR;
+			else if (status == FOUND_DQOT_WFS)
+				continue;
+			else if (status == FOUND_SQOT_WFS)
+				continue;
+			else if (status == WAITING_FOR_CHAR)
+				continue;
+			else if (status == WAITING_FOR_SPACE)
+			{
+				status = WAITING_FOR_RED;
+				i += create_redirection(command, start_i, i);
+			}
+		}
+		else if (command->cmd_input[i] == '>')
+		{
+			if (status == WAITING_FOR_RED)
+			{
+				status = FOUND_ORED;
+				start_i = i;
+				command->append_mode = 0;
+			}
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_IRED)
+				return (printf("-minishell: syntax error near unexpected token `%c'\n", command->cmd_input[i]), -1);
+			else if (status == FOUND_ORED)
+			{
+				command->append_mode = 1;
+				status = WAITING_FOR_CHAR;
+			}
+			else if (status == FOUND_DQOT_WFS)
+				continue;
+			else if (status == FOUND_SQOT_WFS)
+				continue;
+			else if (status == WAITING_FOR_CHAR)
+				return (printf("-minishell: syntax error near unexpected token `%c'\n", command->cmd_input[i]), -1);
+			else if (status == WAITING_FOR_SPACE)
+			{
+				status = FOUND_ORED;
+				i += create_redirection(command, start_i, i);
+			}
+		}
+		else if (command->cmd_input[i] == '<')
+		{
+			if (status == WAITING_FOR_RED)
+			{
+				status = FOUND_IRED;
+				start_i = i;
+			}
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_ORED)
+				return (printf("-minishell: syntax error near unexpected token `%c'\n", command->cmd_input[i]), -1);
+			else if (status == FOUND_IRED)
+			{
+				command->found_limiter = 1;
+				status = WAITING_FOR_CHAR;
+			}
+			else if (status == FOUND_DQOT_WFS)
+				continue;
+			else if (status == FOUND_SQOT_WFS)
+				continue;
+			else if (status == WAITING_FOR_CHAR)
+				return (printf("-minishell: syntax error near unexpected token `%c'\n", command->cmd_input[i]), -1);
+			else if (status == WAITING_FOR_SPACE)
+			{
+				status = FOUND_IRED;
+				i += create_redirection(command, start_i, i);
+			}
+		}
+		else
+		{
+			if (status == WAITING_FOR_RED)
+				continue;
+			else if (status == FOUND_DQOT)
+				continue;
+			else if (status == FOUND_SQOT)
+				continue;
+			else if (status == FOUND_ORED)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_IRED)
+				status = WAITING_FOR_SPACE;
+			else if (status == FOUND_DQOT_WFS)
+				continue;
+			else if (status == FOUND_SQOT_WFS)
+				continue;
+			else if (status == WAITING_FOR_CHAR)
+				status = WAITING_FOR_SPACE;
+			else if (status == WAITING_FOR_SPACE)
+				continue;
+		}
+	}
+	if (status == FOUND_ORED)
+		return (-2);
+	else if (status == FOUND_IRED)
+		return (-2);
+	else if (status == WAITING_FOR_CHAR)
+		return (-2);
+	else if (status == WAITING_FOR_SPACE)
+		create_redirection(command, start_i, i);
+	return (0);
+}
 
 void expand_vars(t_command *command, char **env, int es)
 {
@@ -483,7 +667,7 @@ void alloc_argv(t_command *command)
 	if (status == WAITING_FOR_SPACE)
 		size++;
 	printf("Command has %i arguments.\n", size);
-	command->argv = command_safe_malloc(command, 8 * (size + 1));
+	command->argv = command_safe_malloc(command, sizeof(command->argv) * (size + 1));
 	command->argv[size] = 0;
 }
 
@@ -508,8 +692,10 @@ void	add_type(t_command *command)
 		command->cmd = EXEC;
 }
 
-void	create_command(t_data *data, int start, int end)
+int	create_command(t_data *data, int start, int end)
 {
+	int code;
+
 	t_command *command = safe_malloc(data, sizeof(t_command));
 	if (!data->commands)
 		data->commands = ft_lstnew(command);
@@ -519,21 +705,31 @@ void	create_command(t_data *data, int start, int end)
 	command->free_list = data->free_list;
 	command->stdin = 0;
 	command->stdout = 0;
+	command->limiter = 0;
+	command->found_limiter = 0;
 	command->append_mode = -1;
 	printf("Command input = [%s]\n", command->cmd_input);
 	expand_vars(command, data->env, data->exit_status);
-	//build_redirections(command);
+	code = build_redirections(command);
+	if (code != 0)
+		return (code); //FREE_COMMAND HERE
 	alloc_argv(command);
 	build_argv(command);
 	add_type(command);
+	printf("Command append_mode = [%d]\n", command->append_mode);
+	printf("Command stdin = [%s]\n", command->stdin);
+	printf("Command stdout = [%s]\n", command->stdout);
+	printf("Command limiter = [%s]\n", command->limiter);
+	return (0);
 }
 
-//WHEN 258 is returned have to check outside to not handle any already interpreted command, it should just print error
+//WHEN 258/-1/-2 is returned have to check outside to not handle any already interpreted command, it should just print error
 int	split_commands(t_data *data)
 {
 	int	i;
 	t_parse_status status;
 	int start_i;
+	int	code;
 
 	i = -1;
 	start_i = 0;
@@ -587,7 +783,13 @@ int	split_commands(t_data *data)
 				continue;
 			else if (status == WAITING_FOR_PIPE)
 			{
-				create_command(data, start_i, i);
+				code = create_command(data, start_i, i);
+				if (code != 0)
+				{
+					if (code == -2)
+						printf("-minishell: syntax error near unexpected token `|'\n");
+					return (code);
+				}
 				start_i = i + 1;
 				data->nb_cmds++;
 				status = WAITING_FOR_CHAR;
@@ -620,7 +822,13 @@ int	split_commands(t_data *data)
 	}
 	if (status == WAITING_FOR_PIPE)
 	{
-		create_command(data, start_i, i);
+		code = create_command(data, start_i, i);
+		if (code != 0)
+		{
+			if (code == -2)
+				printf("-minishell: syntax error near unexpected token `newline'\n");
+			return (code);
+		}
 		data->nb_cmds++;
 	}
 	return (0);
