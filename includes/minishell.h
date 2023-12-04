@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/28 17:58:46 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2023/12/04 11:03:16 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,13 @@ typedef enum s_cmdtype {
 typedef enum s_parse_status {
 	WAITING_FOR_CHAR,
 	FOUND_SQOT_WFC,
+	FOUND_SQOT_WFS,
+	FOUND_SQOT_IRED,
+	FOUND_SQOT_ORED,
+	FOUND_DQOT_IRED,
+	FOUND_DQOT_IARED,
+	FOUND_DQOT_ORED,
+	FOUND_DQOT_OARED,
 	FOUND_DQOT_WFS,
 	FOUND_SQOT_WFD,
 	FOUND_SQOT,
@@ -69,6 +76,8 @@ typedef struct s_command
 	int			append_mode;
 	int			fd_in;
 	int			fd_out;
+	char		*limiter;
+	int			found_limiter;
 	t_list		*free_list;
 }			t_command;
 
