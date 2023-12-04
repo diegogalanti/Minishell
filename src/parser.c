@@ -838,6 +838,7 @@ void	init_commands(t_data *data)
 {
 	data->nb_cmds = 0;
 	data->commands = 0;
+
 }
 
 void	parse_input(t_data *data)

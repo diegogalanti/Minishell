@@ -39,11 +39,11 @@ int	creat_pipe(t_data *data)
 
 int	set_fd(t_data *data, t_command *command, int i)
 {
-	if (i == 0)
+	if (i == 0 && command->fd_in > 0)
 		command->fd_in = STDIN_FILENO;
 	else
 		command->fd_in = data->pipe[i - 1][0];
-	if (i == data->nb_cmds - 1)
+	if (i == data->nb_cmds - 1 && command->fd_out > 0)
 		command->fd_out	= STDOUT_FILENO;
 	else
 		command->fd_out = data->pipe[i][1];

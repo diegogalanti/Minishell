@@ -141,7 +141,9 @@ int		is_var(char **car, char *s);
 char	*find_var(char **var, char *s);
 
 /* redirections.c */
-int	here_doc(t_data *data);
+int	set_redirections(t_command *cmd);
+int    check_redirections(t_data *data);
+int	here_doc(t_command *command);
 int	redirect(t_command *command);
 
 /* utils.c */

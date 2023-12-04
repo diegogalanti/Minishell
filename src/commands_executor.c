@@ -100,8 +100,8 @@ void    execute(t_data *data)
 {
 	if (!data->nb_cmds)
 		return ;
-	//if (redirect(data) < 0)
-	//	return (-1);
+	if (!check_redirections(data))
+		return ;
 	if (data->nb_cmds < 2 && data->commands)
 		single_command(data, data->commands->content);
 	else 
