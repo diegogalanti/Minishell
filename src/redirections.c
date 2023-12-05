@@ -28,13 +28,11 @@ int	here_doc(t_command *cmd)
 		return (printf("minishell: .here_doc \n"), 0);
 	while (1)
 	{
-		//ft_printf("> ");
-		//buf = get_next_line(0);
 		buf = readline("< ");
 		if (strncmp(buf, cmd->limiter, ft_strlen(cmd->limiter)) == 0)
 			break ;
 		write(heredoc, buf, ft_strlen(buf));
-		write(heredoc, "/n", 1);
+		write(heredoc, "\n", 1);
 		free(buf);
 	}
 	free(buf);
@@ -42,26 +40,6 @@ int	here_doc(t_command *cmd)
 	cmd->fd_in = open(".here_doc", O_RDONLY);
 	return (1);
 }
-
-/*int	here_doc(t_command *cmd)
-{
-	char	*buf;
-
-	cmd->fd_in = open(".here_doc", O_WRONLY | O_CREAT | O_TRUNC, 00664);
-	if (cmd->fd_in < 0)
-		return (printf("minishell: .here_doc: %s\n", strerror(errno)), 0);
-	while (1)
-	{
-		buf = readline("< ");
-		if (ft_strncmp(buf, cmd->limiter, ft_strlen(cmd->limiter)) == 0)
-			break ;
-		write(cmd->fd_in, buf, ft_strlen(buf));
-		write(cmd->fd_in, "/n", 1);
-		free(buf);
-	}
-	free(buf);
-	return (1);
-}*/
 
 int	set_redirections(t_command *cmd)
 {
@@ -74,7 +52,7 @@ int	set_redirections(t_command *cmd)
 	else if (cmd->limiter)
 		here_doc(cmd);
 	else
-		cmd->fd_in = 0;
+		cmd->fd_in = -1;
 	if (cmd->stdout)
 	{
 		if (cmd->append_mode == 0)
@@ -85,11 +63,25 @@ int	set_redirections(t_command *cmd)
 			return (printf("minishell: %s: %s\n", cmd->stdout, strerror(errno)), 0);
 	}
 	else
-		cmd->fd_out = 0;
+		cmd->fd_out = -1;
 	return (1);
 }
 
-int    check_redirections(t_data *data)
+int	close_redirections(t_command *cmd)
+{
+	if (cmd->stdin)
+		close_fd(&cmd->fd_in);
+	if (cmd->stdout)
+		close_fd(&cmd->fd_out);
+	if (cmd->limiter)
+	{
+		unlink(".here_doc");
+		close_fd(&cmd->fd_in);
+	}
+	return (1);
+}
+
+int    check_redirections(t_data *data, int (*f)(t_command *))
 {
 	int	i;
 	t_list	*head;
@@ -98,7 +90,7 @@ int    check_redirections(t_data *data)
 	i = -1;
 	while (++i < data->nb_cmds)
 	{
-		if (!set_redirections(data->commands->content))
+		if (!(*f)(data->commands->content))
 		 {
 			data->exit_status = errno;
 			return (0);
@@ -107,19 +99,6 @@ int    check_redirections(t_data *data)
 	}
 	data->commands = head;
 	return (1);
-	/*if (data->i_redirect)
-	{
-		if (heredoc == 1)
-			if (heredoc(data) < 0)
-				return (-1);
-		else
-			open file. store fd in first command fd_in
-	}
-	if (data->o_redirect)
-	{
-		open file. store fd in last command fd_out
-		O_TRUNC or O_APPEND (just use variable from data)
-	}*/
 }
 
 int	redirect(t_command *command)
@@ -128,13 +107,13 @@ int	redirect(t_command *command)
 	//	return (0);
 	if (command->fd_in != STDIN_FILENO && command->fd_in >= 0)
 	{
-		dup2(command->fd_in, STDIN_FILENO);
-		close_fd(&(command)->fd_in);
+		dup2(command->fd_in, 0);
+		//close_fd(&(command)->fd_in);
 	}
 	if (command->fd_out != STDOUT_FILENO && command->fd_out >= 0)
 	{
 		dup2(command->fd_out, STDOUT_FILENO);
-		close_fd(&(command)->fd_out);
+		//close_fd(&(command)->fd_out);
 	}
 	return (1);
 }

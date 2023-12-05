@@ -22,6 +22,7 @@ int single_command(t_data *data, t_command *command)
 	if (command->cmd == EXEC)
 	{
 		data->stdout_cpy = dup(STDOUT_FILENO);
+		//close_fd(&data->stdout_cpy);
 		if ((pid = fork()) < 0)
 			return (printf("minishell: Error: fork process\n"), 0);
 		if (pid == 0)
@@ -87,8 +88,6 @@ void   execute_command(t_data *data, t_command *command)
 			exit_child (data, 127);
 		}
 	}
-	//command->fd_in = 0;
-	//command->fd_out = 0;
 	redirect(command);
 	execve(command->argv[0], command->argv, NULL);
 	dup2(data->stdout_cpy, STDOUT_FILENO);
@@ -100,7 +99,7 @@ void    execute(t_data *data)
 {
 	if (!data->nb_cmds)
 		return ;
-	if (!check_redirections(data))
+	if (!check_redirections(data, set_redirections))
 		return ;
 	if (data->nb_cmds < 2 && data->commands)
 		single_command(data, data->commands->content);

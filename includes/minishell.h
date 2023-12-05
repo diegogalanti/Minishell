@@ -142,7 +142,8 @@ char	*find_var(char **var, char *s);
 
 /* redirections.c */
 int	set_redirections(t_command *cmd);
-int    check_redirections(t_data *data);
+int	close_redirections(t_command *cmd);
+int    check_redirections(t_data *data, int (*f)(t_command *));
 int	here_doc(t_command *command);
 int	redirect(t_command *command);
 

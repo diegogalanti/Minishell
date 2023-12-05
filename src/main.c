@@ -38,6 +38,7 @@ int	main(int argc, char **argv, char **env)
 			execute(data);
 			free(data->user_input);
 			data->user_input = NULL;
+			close_all_fd(data);
 		}
 	}
 	return (0);

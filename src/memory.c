@@ -115,6 +115,7 @@ int	close_all_fd(t_data *data)
 				close_fd(&data->pipe[i][1]);
 		}
 	}
+	check_redirections(data, close_redirections);
 	close_fd(&data->stdout_cpy);
 	return (1);
 }
