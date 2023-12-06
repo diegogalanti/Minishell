@@ -30,3 +30,12 @@ Question: Do we want to replicate that behavior? If so, I think we could create 
 Fix 4:
 
 Right now the behavior for open single/double quotes is quite unpredictable. From the subject we dont have to manage it, but to avoid bigger problems maybe I can print a parser error and abort the process.
+
+Fix 5:
+Compilation with "make -n" (as required in evaluation sheet) gives the following error: 
+	
+	cp: cannot stat 'libft.a': No such file or directory
+	make: *** [Makefile:46: libft.a] Error 1
+
+Fix 6:
+clear does not work (should it?)

@@ -75,8 +75,12 @@ void	builtin_cd(t_data *data, t_command *command)
 {
 	int	ret;
 
+	undirect(command, data);
 	if (command->argv[1] == NULL)
+	{
+		ret = chdir(ft_strtrim(find_var(data->env, "HOME"), "="));
 		return ;
+	}
 	if (!strncmp(command->argv[1], "-", ft_strlen(command->argv[1])))
 		ret = chdir(ft_strtrim(find_var(data->env, "OLDPWD"), "="));
 	else if (!strncmp(command->argv[1], "--", ft_strlen(command->argv[1])))
@@ -204,9 +208,9 @@ void	builtin_env(t_data *data, t_command *command)
 
 void	builtin_exit(t_data *data, t_command *command, int i)
 {
-	printf("exit\n");
 	if (data->pipe && i >= 0)
 	{
+		printf("exit\n");
 		if (command->argv[1] && data->pid[i] == 0)
 		{
 			dup2(data->stdout_cpy, STDOUT_FILENO);
@@ -216,7 +220,9 @@ void	builtin_exit(t_data *data, t_command *command, int i)
 		}
 		else
 			exit_child(data, 0);
-	}	
+	}
+	undirect(command, data);
+	printf("exit\n");
 	if (command->argv[1])
                 printf("minishell: exit: too many arguments\n");
 	else

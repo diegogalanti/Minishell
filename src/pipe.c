@@ -66,8 +66,8 @@ void	child_process(t_data *data, t_command *command, int i)
 		execute_command(data, command);
 	else
 	{
-		redirect(command);
 		check_builtins(data, command, i);
+		undirect(command, data);
 	}
 	exit_child (data, 1);
 }

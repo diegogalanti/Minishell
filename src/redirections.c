@@ -41,6 +41,13 @@ int	here_doc(t_command *cmd)
 	return (1);
 }
 
+/* set_redirections: checks for redirections and opens files if necessary
+	if an input file is found (stdin), the file is opened and the fd stored in cmd->fd_in
+	if a limiter is found, a heredoc is created and the fd stored in cmd->fd_in
+	if an output file is found (stdout) it is either opened in append or truncate mode 
+		(depending on append_mode set in parser), the fd is stored in cmd->fd_out
+	if no file is given, the fd_in and/ or fd_out is set to -1 (this value is also used for closed files)*/
+
 int	set_redirections(t_command *cmd)
 {
 	if (cmd->stdin)
@@ -48,6 +55,7 @@ int	set_redirections(t_command *cmd)
 		cmd->fd_in = open(cmd->stdin, O_RDONLY);
 		if (cmd->fd_in == -1)
 			return (printf("minishell: %s: %s\n", cmd->stdin, strerror(errno)), 0);
+			//printf("minishell: %s: %s\n", cmd->stdin, strerror(errno));
 	}
 	else if (cmd->limiter)
 		here_doc(cmd);
@@ -61,6 +69,7 @@ int	set_redirections(t_command *cmd)
 			cmd->fd_out = open(cmd->stdout, O_CREAT | O_WRONLY | O_APPEND, 00664);
 		if (cmd->fd_out == -1)
 			return (printf("minishell: %s: %s\n", cmd->stdout, strerror(errno)), 0);
+			//printf("minishell: %s: %s\n", cmd->stdout, strerror(errno));
 	}
 	else
 		cmd->fd_out = -1;
@@ -95,25 +104,56 @@ int    check_redirections(t_data *data, int (*f)(t_command *))
 			data->exit_status = errno;
 			return (0);
 		 }
+		 if ((*f) == set_redirections)
+		 	redirect(data->commands->content, data);
 		data->commands = data->commands->next;		
 	}
 	data->commands = head;
 	return (1);
 }
 
-int	redirect(t_command *command)
+/*redirect: redirects the input and / or output if necessary
+	1. stores stdin and stdout as copies in data
+	2. if fd_in is set stdinput is redirected to it,
+		fd_in is closed (because dup2 copied it)
+	3- if fd_out is set, stdoutput is redirected to it,
+		fd_out is closed (because dup2 copied it)
+	TO DO: close or close_fd? close_fd sets fd to -1 -> problematic
+		close could result in a close failure later
+		*/
+int	redirect(t_command *command, t_data *data)
 {
 	//if (!command->stdin && !command->stdout)
 	//	return (0);
+	if (data->stdout_cpy == -1)
+		data->stdout_cpy = dup(STDOUT_FILENO);
+	if (data->stdin_cpy == -1)
+		data->stdin_cpy = dup(STDIN_FILENO);
 	if (command->fd_in != STDIN_FILENO && command->fd_in >= 0)
 	{
-		dup2(command->fd_in, 0);
-		//close_fd(&(command)->fd_in);
+		dup2(command->fd_in, STDIN_FILENO);
+		//close(command->fd_in);
 	}
 	if (command->fd_out != STDOUT_FILENO && command->fd_out >= 0)
 	{
 		dup2(command->fd_out, STDOUT_FILENO);
-		//close_fd(&(command)->fd_out);
+		//close_fd(&(command->fd_out));
 	}
 	return (1);
+}
+
+void	undirect(t_command *command, t_data *data)
+{
+	if (command->fd_in > -1)
+	{
+		close_fd(&(command->fd_in));
+		dup2(data->stdin_cpy, STDIN_FILENO);
+		close_fd(&(data->stdin_cpy));
+	}
+	if (command->fd_out > -1)
+	{
+		close_fd(&(command->fd_out));
+		dup2(data->stdout_cpy, STDOUT_FILENO);
+		close_fd(&(data->stdout_cpy));
+	}
 }

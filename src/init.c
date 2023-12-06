@@ -50,6 +50,7 @@ void   *init_data(char **env)
 	data->pipe = NULL;
 	data->exit_status = 0;
 	data->stdout_cpy = -1;
+	data->stdin_cpy = -1;
 	if (!init_env(data, env))
 		return (printf("Error: Could not initialize environment variable\n"),
 				free_exit(data), (void *) 0);

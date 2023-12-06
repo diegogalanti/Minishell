@@ -91,6 +91,7 @@ typedef struct s_data
 	char	**shvar;	/*these are the shell variables (only present in this shell)*/
 	int		**pipe;
 	int		*pid;
+	int		stdin_cpy; 
 	int		stdout_cpy;
 	int		exit_status;
 }			t_data;
@@ -127,9 +128,6 @@ void    free_exit(t_data *data);
 void    free_command(t_command *command);
 void	exit_child(t_data *data, int exit_status);
 
-
-
-
 /* parser.c */
 void	parse_input(t_data *data);
 
@@ -145,7 +143,8 @@ int	set_redirections(t_command *cmd);
 int	close_redirections(t_command *cmd);
 int    check_redirections(t_data *data, int (*f)(t_command *));
 int	here_doc(t_command *command);
-int	redirect(t_command *command);
+int	redirect(t_command *command, t_data *data);
+void	undirect(t_command *command, t_data *data);
 
 /* utils.c */
 char	*fs_strdup(t_data *data, char *s);

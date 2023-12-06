@@ -12,6 +12,33 @@
 
 #include "minishell.h"
 
+/*int single_command(t_data *data, t_command *command)
+{
+	int pid;
+	int	child_exit_status;
+
+	if (!command->argv[0])
+		return (0);
+	data->stdout_cpy = dup(STDOUT_FILENO);
+	//close_fd(&data->stdout_cpy);
+	if ((pid = fork()) < 0)
+		return (printf("minishell: Error: fork process\n"), 0);
+	if (pid == 0)
+	{
+		if (command->cmd == EXEC)
+				execute_command(data, command);
+		else
+		{
+			redirect(command);
+			check_builtins(data, command, -2);
+			exit_child(data, 0);
+		}
+		waitpid(pid, &child_exit_status, 0);
+		get_child_exit_status(data, child_exit_status);
+	}
+	return (1);
+}*/
+
 int single_command(t_data *data, t_command *command)
 {
 	int pid;
@@ -21,8 +48,6 @@ int single_command(t_data *data, t_command *command)
 		return (0);
 	if (command->cmd == EXEC)
 	{
-		data->stdout_cpy = dup(STDOUT_FILENO);
-		//close_fd(&data->stdout_cpy);
 		if ((pid = fork()) < 0)
 			return (printf("minishell: Error: fork process\n"), 0);
 		if (pid == 0)
@@ -31,7 +56,11 @@ int single_command(t_data *data, t_command *command)
 		get_child_exit_status(data, child_exit_status);
 	}
 	else
-	  check_builtins(data, command, -2);
+	{
+	//	redirect(command);
+		check_builtins(data, command, -2);
+		undirect(command, data);
+	}
 	return (1);
 }
 
@@ -88,13 +117,19 @@ void   execute_command(t_data *data, t_command *command)
 			exit_child (data, 127);
 		}
 	}
-	redirect(command);
+	//redirect(command);
 	execve(command->argv[0], command->argv, NULL);
-	dup2(data->stdout_cpy, STDOUT_FILENO);
+	undirect(command, data);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
 	exit_child (data, errno);
 }
 
+/* execute: 1. checks if there are commands
+			2. checks if there are redirections and sets them if necessary
+			3. redirects
+			4. if 1 command, executes it
+			5. if 2 or more, it pipes
+			*/
 void    execute(t_data *data)
 {
 	if (!data->nb_cmds)
