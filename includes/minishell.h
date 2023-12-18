@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/12/04 11:03:16 by digallar         ###   ########.fr       */
+/*   Updated: 2023/12/18 17:58:00 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ typedef enum s_parse_status {
 	FOUND_ORED,
 	FOUND_IARED,
 	FOUND_OARED,
-	WAITING_FOR_DOLLAR
-
+	WAITING_FOR_DOLLAR,
+	WAITING_FOR_QOT
 }	t_parse_status;
 
 typedef struct s_command
