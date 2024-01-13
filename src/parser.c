@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/13 15:37:37 by digallar         ###   ########.fr       */
+/*   Updated: 2023/12/18 21:07:57 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,44 @@ void	skip_spaces(t_command *command, int *i)
 	while(ft_isspace(command->cmd_input[*i]))
 	{
 		(*i)++;
+	}
+}
+
+void remove_quotes(char *arg)
+{
+	int	i;
+	t_parse_status status;
+
+	i = -1;
+	status = WAITING_FOR_QOT;
+	while (arg[++i])
+	{
+		if (arg[i] == '\"')
+		{
+			if (status == WAITING_FOR_QOT) {
+				ft_memmove(arg + i, arg + i + 1, ft_strlen(arg) - i);
+				i--;
+				status = FOUND_DQOT;
+			} else if (status == FOUND_DQOT) {
+				status = WAITING_FOR_QOT;
+				ft_memmove(arg + i, arg + i + 1, ft_strlen(arg) - i);
+				i--;
+			} else if (status == FOUND_SQOT)
+				continue;
+		}
+		else if (arg[i] == '\'')
+		{
+			if (status == WAITING_FOR_QOT) {
+				status = FOUND_SQOT;
+				ft_memmove(arg + i, arg + i + 1, ft_strlen(arg) - i);
+				i--;
+			} else if (status == FOUND_SQOT) {
+				status = WAITING_FOR_QOT;
+				ft_memmove(arg + i, arg + i + 1, ft_strlen(arg) - i);
+				i--;
+			} else if (status == FOUND_DQOT)
+				continue;
+		}
 	}
 }
 
@@ -96,8 +134,10 @@ int	create_limiter(t_command *command, int start, int end)
 		i++;
 	}
 	command->limiter = ft_substr(command->cmd_input, i, end - i);
+	
 	command->cmd_input = ft_strjoin(ft_substr(command->cmd_input, 0, start), ft_substr(command->cmd_input, end, ft_strlen(command->cmd_input) - end));
 	command->found_limiter = 0;
+	remove_quotes(command->limiter);
 	printf("Limiter = [%s]\n", command->limiter);
 	return (ft_strlen(command->cmd_input) - old_size);
 }
@@ -126,11 +166,13 @@ int	create_redirection(t_command *command, int start, int end)
 	if (type == 0)
 	{
 		command->stdin = ft_substr(command->cmd_input, i, end - i);
+		remove_quotes(command->stdin);
 		printf("Redirection input = [%s]\n", command->stdin);
 	}
 	else if (type == 1)
 	{
 		command->stdout = ft_substr(command->cmd_input, i, end - i);
+		remove_quotes(command->stdout);
 		printf("Redirection output = [%s]\n", command->stdout);
 	}
 	command->cmd_input = ft_strjoin(ft_substr(command->cmd_input, 0, start), ft_substr(command->cmd_input, end, ft_strlen(command->cmd_input) - end));
@@ -570,6 +612,7 @@ void build_argv(t_command *command)
 			{
 				status = WAITING_FOR_CHAR;
 				command->argv[pos] = ft_substr(command->cmd_input, start_i, i - start_i);
+				remove_quotes(command->argv[pos]);
 				printf("Argument = [%s]\n", command->argv[pos]);
 				start_i = i + 1;
 				pos++;
@@ -591,6 +634,7 @@ void build_argv(t_command *command)
 	if (status == WAITING_FOR_SPACE)
 	{
 		command->argv[pos] = ft_substr(command->cmd_input, start_i, i - start_i);
+		remove_quotes(command->argv[pos]);
 		printf("Argument = [%s]\n", command->argv[pos]);
 	}
 }
