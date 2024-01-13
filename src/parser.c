@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/12/04 11:03:46 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:37:37 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -530,7 +530,7 @@ void build_argv(t_command *command)
 			else if (status == FOUND_SQOT)
 				continue;
 			else if (status == FOUND_DQOT_WFC)
-				status = WAITING_FOR_CHAR;
+				status = WAITING_FOR_SPACE;
 			else if (status == FOUND_DQOT)
 				status = WAITING_FOR_SPACE;
 			else if (status == WAITING_FOR_SPACE)
@@ -544,7 +544,7 @@ void build_argv(t_command *command)
 				status = FOUND_SQOT_WFC;
 			}
 			else if (status == FOUND_SQOT_WFC)
-				status = WAITING_FOR_CHAR;
+				status = WAITING_FOR_SPACE;
 			else if (status == FOUND_SQOT)
 				status = WAITING_FOR_SPACE;
 			else if (status == FOUND_DQOT_WFC)
@@ -615,7 +615,7 @@ void alloc_argv(t_command *command)
 			else if (status == FOUND_SQOT)
 				continue;
 			else if (status == FOUND_DQOT_WFC)
-				status = WAITING_FOR_CHAR;
+				status = WAITING_FOR_SPACE;
 			else if (status == FOUND_DQOT)
 				status = WAITING_FOR_SPACE;
 			else if (status == WAITING_FOR_SPACE)
@@ -626,7 +626,7 @@ void alloc_argv(t_command *command)
 			if (status == WAITING_FOR_CHAR)
 				status = FOUND_SQOT_WFC;
 			else if (status == FOUND_SQOT_WFC)
-				status = WAITING_FOR_CHAR;
+				status = WAITING_FOR_SPACE;
 			else if (status == FOUND_SQOT)
 				status = WAITING_FOR_SPACE;
 			else if (status == FOUND_DQOT_WFC)
@@ -673,7 +673,6 @@ void alloc_argv(t_command *command)
 
 void	add_type(t_command *command)
 {
-
 	if (!strncmp(command->argv[0], "echo", ft_strlen(command->argv[0])))
 		command->cmd = ECHO;
 	else if (!strncmp(command->argv[0], "cd ", ft_strlen(command->argv[0])))
@@ -745,7 +744,7 @@ int	split_commands(t_data *data)
 			else if (status == FOUND_SQOT)
 				continue;
 			else if (status == FOUND_DQOT_WFC)
-				status = WAITING_FOR_CHAR;
+				status = WAITING_FOR_PIPE;
 			else if (status == FOUND_DQOT)
 				status = WAITING_FOR_PIPE;
 			else if (status == WAITING_FOR_PIPE)
@@ -756,7 +755,7 @@ int	split_commands(t_data *data)
 			if (status == WAITING_FOR_CHAR)
 				status = FOUND_SQOT_WFC;
 			else if (status == FOUND_SQOT_WFC)
-				status = WAITING_FOR_CHAR;
+				status = WAITING_FOR_PIPE;
 			else if (status == FOUND_SQOT)
 				status = WAITING_FOR_PIPE;
 			else if (status == FOUND_DQOT_WFC)
@@ -845,14 +844,13 @@ void	parse_input(t_data *data)
 {
 	init_commands(data);
 	split_commands(data);
-	
 	//code do split user_input into cmd_input
 	//code to break command_input into tokens
 	/* one block for each command */
 	//first command
 	// data->nb_cmds = 1;
 	// t_command *command1 = safe_malloc(data, sizeof(t_command));
-	
+
 	// command1->argv = fs_split(data, data->user_input, ' ');
 	/* one block for each command */
 	//first command
@@ -866,7 +864,7 @@ void	parse_input(t_data *data)
 	//	command1->i_redirect = "/folde/input.txt"; /* set to 0 to use stdin */
 	//	command1->o_redirect = "/folde/output.txt"; /* set to 0 to use stdout. o_redirect and a_redirect cannot be used together. */
 	//	command1->a_redirect = 0; /* set to 0 to use stdout. o_redirect and a_redirect cannot be used together. */
-	
+
 	//second command
 	//t_command *command2 = safe_malloc(data, sizeof(t_command));
 	//	command2->cmd = CD;
