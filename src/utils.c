@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 12:03:17 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/19 12:03:19 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/13 16:45:29 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 char	*fs_strdup(t_data *data, char *s)
-
 {
 	char	*cpy;
 	size_t	len;
@@ -38,7 +37,6 @@ char	*fs_strdup(t_data *data, char *s)
 	is found in s1.*/
 
 int	ft_strvcmp(const char *s1, const char *s2)
-
 {
 	unsigned int	i;
 
@@ -54,4 +52,76 @@ int	ft_strvcmp(const char *s1, const char *s2)
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
+char	*fs_strjoin(char const *s1, char const *s2, t_command *command)
+{
+	char	*str;
+	int		len;
+	int		i;
+	int		j;
 
+	len = (ft_strlen(s1) + ft_strlen(s2));
+	str = (char *)command_safe_malloc(command, sizeof(*str) * (len + 1));
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (s1[i] != '\0')
+	{
+		str[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (s2[j] != '\0')
+	{
+		str[i] = s2[j];
+		i++;
+		j++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+char	*ff_strdup(t_command *command, char *s)
+{
+	char	*cpy;
+	size_t	len;
+	size_t	i;
+
+	len = ft_strlen(s);
+	cpy = (char *)command_safe_malloc(command, (sizeof(*cpy) * (len + 1)));
+	if (!cpy)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		cpy[i] = s[i];
+		i++;
+	}
+	cpy[i] = '\0';
+	return (cpy);
+}
+
+char	*fs_substr(char const *s, unsigned int start, size_t len, t_command *command)
+{
+	char	*substr;
+	size_t	i;
+	size_t	strlen;
+
+	strlen = ft_strlen(s);
+	if (!s)
+		return (NULL);
+	if ((size_t)start > strlen)
+		return (ff_strdup(command, ""));
+	if (len > (strlen - start))
+		len = (strlen - start);
+	substr = (char *)command_safe_malloc(command, sizeof(*substr) * (len + 1));
+	if (!substr)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		substr[i] = s[start + i];
+		i++;
+	}
+	substr[i] = '\0';
+	return (substr);
+}

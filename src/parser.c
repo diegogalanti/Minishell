@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:35:12 by digallar          #+#    #+#             */
-/*   Updated: 2023/12/18 21:07:57 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/13 16:45:20 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int expand_var(t_command *command, char **env, int start, int end, int inside_qu
 
 	tmp_cmd = command->cmd_input;
 	old_size = ft_strlen(command->cmd_input);
-	env_var = ft_substr(command->cmd_input, start, (end - start) + 1);
+	env_var = fs_substr(command->cmd_input, start, (end - start) + 1, command);
 	env_var_value = find_var(env, &env_var[1]);
 	if (!env_var_value)
 	{
@@ -90,11 +90,11 @@ int expand_var(t_command *command, char **env, int start, int end, int inside_qu
 	}
 	if (!inside_quotes)
 	{
-		env_var_value = ft_strjoin("\"", env_var_value);
-		env_var_value = ft_strjoin(env_var_value, "\"");
+		env_var_value = fs_strjoin("\"", env_var_value, command);
+		env_var_value = fs_strjoin(env_var_value, "\"", command);
 	}
-	tmp_cmd = ft_strjoin(ft_substr(command->cmd_input, 0, start), env_var_value);
-	command->cmd_input = ft_strjoin(tmp_cmd, ft_substr(command->cmd_input, end + 1, ft_strlen(command->cmd_input) - end));
+	tmp_cmd = fs_strjoin(fs_substr(command->cmd_input, 0, start, command), env_var_value, command);
+	command->cmd_input = fs_strjoin(tmp_cmd, fs_substr(command->cmd_input, end + 1, ft_strlen(command->cmd_input) - end, command), command);
 	printf("Trying to replace [%s] with [%s] resulted in [%s]\n", env_var, env_var_value, command->cmd_input);
 	return (ft_strlen(command->cmd_input) - old_size);
 }
@@ -111,11 +111,11 @@ int expand_exit_status(t_command *command, int es, int start, int end, int insid
 	env_var_value = ft_itoa(es);
 	if (!inside_quotes)
 	{
-		env_var_value = ft_strjoin("\"", env_var_value);
-		env_var_value = ft_strjoin(env_var_value, "\"");
+		env_var_value = fs_strjoin("\"", env_var_value, command);
+		env_var_value = fs_strjoin(env_var_value, "\"", command);
 	}
-	tmp_cmd = ft_strjoin(ft_substr(command->cmd_input, 0, start), env_var_value);
-	command->cmd_input = ft_strjoin(tmp_cmd, ft_substr(command->cmd_input, end + 1, ft_strlen(command->cmd_input) - end));
+	tmp_cmd = fs_strjoin(fs_substr(command->cmd_input, 0, start, command), env_var_value, command);
+	command->cmd_input = fs_strjoin(tmp_cmd, fs_substr(command->cmd_input, end + 1, ft_strlen(command->cmd_input) - end, command), command);
 	printf("Trying to replace [$?] with [%s] resulted in [%s]\n", env_var_value, command->cmd_input);
 	return (ft_strlen(command->cmd_input) - old_size);
 }
@@ -133,9 +133,9 @@ int	create_limiter(t_command *command, int start, int end)
 			break;
 		i++;
 	}
-	command->limiter = ft_substr(command->cmd_input, i, end - i);
-	
-	command->cmd_input = ft_strjoin(ft_substr(command->cmd_input, 0, start), ft_substr(command->cmd_input, end, ft_strlen(command->cmd_input) - end));
+	command->limiter = fs_substr(command->cmd_input, i, end - i, command);
+
+	command->cmd_input = fs_strjoin(fs_substr(command->cmd_input, 0, start, command), fs_substr(command->cmd_input, end, ft_strlen(command->cmd_input) - end, command), command);
 	command->found_limiter = 0;
 	remove_quotes(command->limiter);
 	printf("Limiter = [%s]\n", command->limiter);
@@ -165,17 +165,17 @@ int	create_redirection(t_command *command, int start, int end)
 	}
 	if (type == 0)
 	{
-		command->stdin = ft_substr(command->cmd_input, i, end - i);
+		command->stdin = fs_substr(command->cmd_input, i, end - i, command);
 		remove_quotes(command->stdin);
 		printf("Redirection input = [%s]\n", command->stdin);
 	}
 	else if (type == 1)
 	{
-		command->stdout = ft_substr(command->cmd_input, i, end - i);
+		command->stdout = fs_substr(command->cmd_input, i, end - i, command);
 		remove_quotes(command->stdout);
 		printf("Redirection output = [%s]\n", command->stdout);
 	}
-	command->cmd_input = ft_strjoin(ft_substr(command->cmd_input, 0, start), ft_substr(command->cmd_input, end, ft_strlen(command->cmd_input) - end));
+	command->cmd_input = fs_strjoin(fs_substr(command->cmd_input, 0, start, command), fs_substr(command->cmd_input, end, ft_strlen(command->cmd_input) - end, command), command);
 	return (ft_strlen(command->cmd_input) - old_size);
 }
 
@@ -611,7 +611,7 @@ void build_argv(t_command *command)
 			else if (status == WAITING_FOR_SPACE)
 			{
 				status = WAITING_FOR_CHAR;
-				command->argv[pos] = ft_substr(command->cmd_input, start_i, i - start_i);
+				command->argv[pos] = fs_substr(command->cmd_input, start_i, i - start_i, command);
 				remove_quotes(command->argv[pos]);
 				printf("Argument = [%s]\n", command->argv[pos]);
 				start_i = i + 1;
@@ -633,7 +633,7 @@ void build_argv(t_command *command)
 	}
 	if (status == WAITING_FOR_SPACE)
 	{
-		command->argv[pos] = ft_substr(command->cmd_input, start_i, i - start_i);
+		command->argv[pos] = fs_substr(command->cmd_input, start_i, i - start_i, command);
 		remove_quotes(command->argv[pos]);
 		printf("Argument = [%s]\n", command->argv[pos]);
 	}
@@ -744,7 +744,7 @@ int	create_command(t_data *data, int start, int end)
 		data->commands = ft_lstnew(command);
 	else
 		ft_lstadd_back(&data->commands, ft_lstnew(command));
-	command->cmd_input = ft_substr(data->user_input, start, end - start);
+	command->cmd_input = fs_substr(data->user_input, start, end - start, command);
 	command->free_list = data->free_list;
 	command->stdin = 0;
 	command->stdout = 0;
@@ -888,6 +888,7 @@ void	parse_input(t_data *data)
 {
 	init_commands(data);
 	split_commands(data);
+
 	//code do split user_input into cmd_input
 	//code to break command_input into tokens
 	/* one block for each command */

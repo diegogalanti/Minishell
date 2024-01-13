@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/12/18 17:58:00 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/13 16:37:06 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef struct s_command
 	t_list		*free_list;
 }			t_command;
 
-typedef struct s_data 
+typedef struct s_data
 {
 	t_list	*free_list;
 	t_list	*commands;
@@ -91,7 +91,7 @@ typedef struct s_data
 	char	**shvar;	/*these are the shell variables (only present in this shell)*/
 	int		**pipe;
 	int		*pid;
-	int		stdin_cpy; 
+	int		stdin_cpy;
 	int		stdout_cpy;
 	int		exit_status;
 }			t_data;
@@ -149,6 +149,8 @@ void	undirect(t_command *command, t_data *data);
 /* utils.c */
 char	*fs_strdup(t_data *data, char *s);
 int	ft_strvcmp(const char *s1, const char *s2);
+char	*fs_strjoin(char const *s1, char const *s2, t_command *command);
+char	*fs_substr(char const *s, unsigned int start, size_t len, t_command *command);
 
 /* sf_split.c */
 char	**fs_split(t_data *data, char const *s, char c);
