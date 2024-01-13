@@ -37,7 +37,10 @@ Compilation with "make -n" (as required in evaluation sheet) gives the following
 	cp: cannot stat 'libft.a': No such file or directory
 	make: *** [Makefile:46: libft.a] Error 1
 
- DIEGOS's comment: make -n basically means you show the commands that will be executed but do not execute them, so it will fail as we have to compile and copy the lib to be able to build, only ways to make it work is to have the lib already compiled and present in the folder instead of compiling it during build. I think we can explain to evaluator that when we build minishell, we also re build libft and copy the newly build to our project, so that is why it will fail, is expected. If you build normally with make and them use make -n, it will not fail as the lib is already in the folder.
+ DIEGO's comment: make -n basically means you show the commands that will be executed but do not execute them, so it will fail as we have to compile and copy the lib to be able to build, only ways to make it work is to have the lib already compiled and present in the folder instead of compiling it during build. I think we can explain to evaluator that when we build minishell, we also re build libft and copy the newly build to our project, so that is why it will fail, is expected. If you build normally with make and them use make -n, it will not fail as the lib is already in the folder.
 
 Fix 6:
 clear does not work (should it?)
+
+DIEGO's comment: I think to make calling clear work we have to do stuff that is out of scope, however we can hardcode the following ft_printf instead of calling the clear command:
+ft_printf("\033[H\033[J");
