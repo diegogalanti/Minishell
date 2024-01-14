@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:53:05 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/21 14:53:07 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/14 09:52:23 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /* here_doc: This function mimics the behaviour of "<< LIMITER" in a shell.
 	A temporary file called "here_doc" is opened. With the help of the function
 	get_next_line the user input is read line by line into a buffer and written
-	into the here_doc file until a LIMITER (set by the user) is hit. After 
+	into the here_doc file until a LIMITER (set by the user) is hit. After
 	its creation the here_doc file is treated the same as the infile (f1).*/
 
 int	here_doc(t_command *cmd)
@@ -44,35 +44,37 @@ int	here_doc(t_command *cmd)
 /* set_redirections: checks for redirections and opens files if necessary
 	if an input file is found (stdin), the file is opened and the fd stored in cmd->fd_in
 	if a limiter is found, a heredoc is created and the fd stored in cmd->fd_in
-	if an output file is found (stdout) it is either opened in append or truncate mode 
+	if an output file is found (stdout) it is either opened in append or truncate mode
 		(depending on append_mode set in parser), the fd is stored in cmd->fd_out
 	if no file is given, the fd_in and/ or fd_out is set to -1 (this value is also used for closed files)*/
 
-int	set_redirections(t_command *cmd)
+int	set_redirections(t_command *c)
 {
-	if (cmd->stdin)
+	if (c->stdin)
 	{
-		cmd->fd_in = open(cmd->stdin, O_RDONLY);
-		if (cmd->fd_in == -1)
-			return (printf("minishell: %s: %s\n", cmd->stdin, strerror(errno)), 0);
+		c->fd_in = open(c->stdin, O_RDONLY);
+		if (c->fd_in == -1)
+			return (printf("minishell: %s: %s\n",
+					c->stdin, strerror(errno)), 0);
 			//printf("minishell: %s: %s\n", cmd->stdin, strerror(errno));
 	}
-	else if (cmd->limiter)
-		here_doc(cmd);
+	else if (c->limiter)
+		here_doc(c);
 	else
-		cmd->fd_in = -1;
-	if (cmd->stdout)
+		c->fd_in = -1;
+	if (c->stdout)
 	{
-		if (cmd->append_mode == 0)
-			cmd->fd_out = open(cmd->stdout, O_CREAT | O_WRONLY | O_TRUNC, 00664);
-		else if (cmd->append_mode == 1)
-			cmd->fd_out = open(cmd->stdout, O_CREAT | O_WRONLY | O_APPEND, 00664);
-		if (cmd->fd_out == -1)
-			return (printf("minishell: %s: %s\n", cmd->stdout, strerror(errno)), 0);
+		if (c->append_mode == 0)
+			c->fd_out = open(c->stdout, O_CREAT | O_WRONLY | O_TRUNC, 00664);
+		else if (c->append_mode == 1)
+			c->fd_out = open(c->stdout, O_CREAT | O_WRONLY | O_APPEND, 00664);
+		if (c->fd_out == -1)
+			return (printf("minishell: %s: %s\n", c->stdout, strerror(errno)),
+				0);
 			//printf("minishell: %s: %s\n", cmd->stdout, strerror(errno));
 	}
 	else
-		cmd->fd_out = -1;
+		c->fd_out = -1;
 	return (1);
 }
 
@@ -90,9 +92,9 @@ int	close_redirections(t_command *cmd)
 	return (1);
 }
 
-int    check_redirections(t_data *data, int (*f)(t_command *))
+int	check_redirections(t_data *data, int (*f)(t_command *))
 {
-	int	i;
+	int		i;
 	t_list	*head;
 
 	head = data->commands;
@@ -100,13 +102,13 @@ int    check_redirections(t_data *data, int (*f)(t_command *))
 	while (++i < data->nb_cmds)
 	{
 		if (!(*f)(data->commands->content))
-		 {
+		{
 			data->exit_status = errno;
 			return (0);
-		 }
-		 if ((*f) == set_redirections)
-		 	redirect(data->commands->content, data);
-		data->commands = data->commands->next;		
+		}
+		if ((*f) == set_redirections)
+			redirect(data->commands->content, data);
+		data->commands = data->commands->next;
 	}
 	data->commands = head;
 	return (1);

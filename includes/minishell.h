@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/13 16:37:06 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/14 10:10:40 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ typedef struct s_command
 	int			fd_out;
 	char		*limiter;
 	int			found_limiter;
+	int			exit_status;
+	char		**env;
 	t_list		*free_list;
 }			t_command;
 
@@ -97,7 +99,7 @@ typedef struct s_data
 }			t_data;
 
 /* init.c */
-void    *init_data(char **env);
+void	*init_data(char **env);
 int		init_env(t_data *data, char **env);
 
 /* memory.c */
@@ -109,23 +111,23 @@ void	close_fd(int *fd);
 
 /* commands_executor.c */
 char	*find_path(t_data *data, char *cmd);
-int 	single_command(t_data *data, t_command *command);
+int		single_command(t_data *data, t_command *command);
 void	execute_command(t_data *data, t_command *command);
-void    execute(t_data *data);
+void	execute(t_data *data);
 
 /* builtins.c */
-void    check_builtins(t_data *data, t_command *command, int i);
+void	check_builtins(t_data *data, t_command *command, int i);
 
 /* pipe.c */
-int	creat_pipe(t_data *data);
-int	pipe_commands(t_data *data);
+int		creat_pipe(t_data *data);
+int		pipe_commands(t_data *data);
 void	child_process(t_data *data, t_command *command, int i);
 void	get_child_exit_status(t_data *data, int child_exit_status);
 
 /* error_exit.c */
 void	free_data(t_data *data);
-void    free_exit(t_data *data);
-void    free_command(t_command *command);
+void	free_exit(t_data *data);
+void	free_command(t_command *command);
 void	exit_child(t_data *data, int exit_status);
 
 /* parser.c */
@@ -133,24 +135,25 @@ void	parse_input(t_data *data);
 
 /* env_var.c */
 //char   **add_var(t_data *data, char **var, char *new_var);
-char    **del_var(t_data *data, char **var, char *del_var);
-char    **add_mod_var(t_data *data, char **var, char *new_var);
+char	**del_var(t_data *data, char **var, char *del_var);
+char	**add_mod_var(t_data *data, char **var, char *new_var);
 int		is_var(char **car, char *s);
 char	*find_var(char **var, char *s);
 
 /* redirections.c */
-int	set_redirections(t_command *cmd);
-int	close_redirections(t_command *cmd);
-int    check_redirections(t_data *data, int (*f)(t_command *));
-int	here_doc(t_command *command);
-int	redirect(t_command *command, t_data *data);
+int		set_redirections(t_command *cmd);
+int		close_redirections(t_command *cmd);
+int		check_redirections(t_data *data, int (*f)(t_command *));
+int		here_doc(t_command *command);
+int		redirect(t_command *command, t_data *data);
 void	undirect(t_command *command, t_data *data);
 
 /* utils.c */
 char	*fs_strdup(t_data *data, char *s);
-int	ft_strvcmp(const char *s1, const char *s2);
+int		ft_strvcmp(const char *s1, const char *s2);
 char	*fs_strjoin(char const *s1, char const *s2, t_command *command);
 char	*fs_substr(char const *s, unsigned int start, size_t len, t_command *command);
+char	*ff_strjoin(char const *s1, char const *s2, t_data *data);
 
 /* sf_split.c */
 char	**fs_split(t_data *data, char const *s, char c);

@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 15:05:54 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/21 11:12:21 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/14 09:45:36 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@
 /* del_var: deletes given variable (del_var) from environment varialbe list (data->env)
 	This is done by allocating an array one size smaller than */
 
-char    **del_var(t_data *data, char **var, char *del_var)
+char	**del_var(t_data *data, char **var, char *del_var)
 {
-	int	i;
-	int	j;
-	char    **ret;
+	int		i;
+	int		j;
+	char	**ret;
 
 	i = 0;
 	j = 0;
@@ -45,7 +45,8 @@ char    **del_var(t_data *data, char **var, char *del_var)
 		return (var);
 	while (var != NULL && var[i] != NULL)
 		i++;
-	if (!(ret = safe_malloc(data, (i * sizeof(char *)))))
+	ret = safe_malloc(data, (i * sizeof(char *)));
+	if (!ret)
 		return (NULL);
 	i = -1;
 	while (var != NULL && var[++i] != NULL)
@@ -59,17 +60,18 @@ char    **del_var(t_data *data, char **var, char *del_var)
 	return (ret);
 }
 
-char    **add_mod_var(t_data *data, char **var, char *new_var)
+char	**add_mod_var(t_data *data, char **var, char *new_var)
 {
-	int	i;
+	int		i;
 	int		add;
-	char    **ret;
+	char	**ret;
 
 	add = 1 - is_var(var, new_var);
 	i = 0;
 	while (var != NULL && var[i] != NULL)
 		i++;
-	if (!(ret = safe_malloc(data, ((i + 1 + add) * sizeof(char *)))))
+	ret = safe_malloc(data, ((i + 1 + add) * sizeof(char *)));
+	if (!ret)
 		return (NULL);
 	i = -1;
 	while (var != NULL && var[++i] != NULL)
@@ -86,7 +88,7 @@ char    **add_mod_var(t_data *data, char **var, char *new_var)
 }
 
 /* find_var: iterates through environment variable list and checks if var_name is a variable
-	In case it is, it returns a pointer to the value of the variable. 
+	In case it is, it returns a pointer to the value of the variable.
 	In case it is not, it returns a NULL pointer.*/
 
 char	*find_var(char **var, char *var_name)

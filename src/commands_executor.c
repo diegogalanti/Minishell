@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_executor.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/28 18:01:55 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/14 09:57:29 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,17 @@
 	return (1);
 }*/
 
-int single_command(t_data *data, t_command *command)
+int	single_command(t_data *data, t_command *command)
 {
-	int pid;
+	int	pid;
 	int	child_exit_status;
 
 	if (!command->argv[0])
 		return (0);
 	if (command->cmd == EXEC)
 	{
-		if ((pid = fork()) < 0)
+		pid = fork();
+		if (pid < 0)
 			return (printf("minishell: Error: fork process\n"), 0);
 		if (pid == 0)
 			execute_command(data, command);
@@ -77,29 +78,24 @@ char	*find_path(t_data *data, char *cmd)
 	i = -1;
 	while (dir[++i])
 	{
-		test_path = ft_strjoin(dir[i], "/");
-		test_cmd = ft_strjoin(test_path, cmd);
-		free(test_path);
+		test_path = ff_strjoin(dir[i], "/", data);
+		test_cmd = ff_strjoin(test_path, cmd, data);
 		test_path = NULL;
 		if (!access(test_cmd, F_OK))
 			break ;
-		free(test_cmd);
 		test_cmd = NULL;
-
 	}
 	if (dir[i] == NULL)
 		return (cmd);
 	cmd = fs_strdup(data, test_cmd);
-	free(test_cmd);
 	test_cmd = NULL;
 	return (cmd);
 }
 
-
 /* Question: Does reassigning command->argv[0] lead to a memory leak?
 				(because only 1 element of argv is reassigned) */
 
-void   execute_command(t_data *data, t_command *command)
+void	execute_command(t_data *data, t_command *command)
 {
 	if (!command || !command->argv || !command->argv[0])
 	{
@@ -130,7 +126,7 @@ void   execute_command(t_data *data, t_command *command)
 			4. if 1 command, executes it
 			5. if 2 or more, it pipes
 			*/
-void    execute(t_data *data)
+void	execute(t_data *data)
 {
 	if (!data->nb_cmds)
 		return ;
@@ -138,6 +134,6 @@ void    execute(t_data *data)
 		return ;
 	if (data->nb_cmds < 2 && data->commands)
 		single_command(data, data->commands->content);
-	else 
+	else
 		pipe_commands(data);
 }

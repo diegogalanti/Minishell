@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 15:54:59 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/28 17:53:33 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/14 10:00:08 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	set_fd(t_data *data, t_command *command, int i)
 	else if (command->fd_in < 0)
 		command->fd_in = data->pipe[i - 1][0];
 	if (i == data->nb_cmds - 1 && command->fd_out < 0)
-		command->fd_out	= STDOUT_FILENO;
+		command->fd_out = STDOUT_FILENO;
 	else if (command->fd_out < 0)
 		command->fd_out = data->pipe[i][1];
 	i = -1;
@@ -87,9 +87,9 @@ void	get_child_exit_status(t_data *data, int child_exit_status)
 
 int	pipe_commands(t_data *data)
 {
-	int	i;
-	int	child_exit_status;
-	t_list *command;
+	int		i;
+	int		child_exit_status;
+	t_list	*command;
 
 	command = data->commands;
 	if (!creat_pipe(data))
@@ -97,7 +97,8 @@ int	pipe_commands(t_data *data)
 	i = -1;
 	while (++i < data->nb_cmds)
 	{
-		if ((data->pid[i] = fork()) < 0)
+		data->pid[i] = fork();
+		if (data->pid[i] < 0)
 			return (printf("Minishell: Error: Fork failed\n"), 0);
 		if (data->pid[i] == 0)
 			child_process(data, command->content, i);

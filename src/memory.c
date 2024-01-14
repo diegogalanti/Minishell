@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 17:51:58 by digallar          #+#    #+#             */
-/*   Updated: 2023/12/04 10:54:38 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/14 10:01:05 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void	close_fd(int *fd)
 	}
 }
 
-/* closes all file descriptors 
+/* closes all file descriptors
 	so far, only the ones for the pipes
 	To Do: close heredoc & files from redirection*/
 int	close_all_fd(t_data *data)

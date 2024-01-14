@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:46:01 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/28 18:07:36 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/14 10:08:40 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	builtin_echo(t_command *command)
 {
 	int	i;
 	int	n;
-	
+
 	i = 1;
 	n = 0;
 	if (command->argv[i] && !strncmp(command->argv[i], "-n", 2))
@@ -35,7 +35,7 @@ void	builtin_echo(t_command *command)
 	{
 		if (i > 1 + n)
 			printf("%c", 32);
-		printf("%s",command->argv[i]);
+		printf("%s", command->argv[i]);
 		i++;
 	}
 	if (n == 0)
@@ -46,13 +46,13 @@ void	builtin_echo(t_command *command)
 	With the help of getcwd() the absolute path of the current working
 	directory is saved in a buffer.
 	This string is the printed on the screen.
-	Questions: What if getcwd does not behave as it should? 
+	Questions: What if getcwd does not behave as it should?
 		If it returns NULL for example?
 		How to we deal with redirections? this could have an impact on
 		whether to use printf or ft_putstr
 		Is buffer size good?*/
 
-void	builtin_pwd()
+void	builtin_pwd(void)
 {
 	char	*buf;
 
@@ -66,7 +66,7 @@ void	builtin_pwd()
 /* builtin_cd: mimicks the behaviour of cd in bash
 	it accepts absolute and relative path and .. and .
 	as well as -- and -
-	
+
 	To Do (maybe, not sure if we have to):
 	- use errno for error message
 	- update OLDPWD so that cd - works properly*/
@@ -105,10 +105,10 @@ void	print_export(char **env)
 		j = -1;
 		while (env[i][++j] != '=')
 			printf("%c", env[i][j]);
-		printf("%c",env[i][j++]);
+		printf("%c", env[i][j++]);
 		printf("%c", 34);
 		while (env[i][++j] != '\0')
-			printf("%c",env[i][j]);
+			printf("%c", env[i][j]);
 		printf("%c\n", 34);
 	}
 }
@@ -122,8 +122,8 @@ void	print_export(char **env)
 
 int	check_export_var(char *str)
 {
-	int 	i;
-	int		y;
+	int	i;
+	int	y;
 
 	i = 0;
 	y = 0;
@@ -142,7 +142,6 @@ int	check_export_var(char *str)
 }
 
 /* TO DO: change variables*/
-
 void	builtin_export(t_data *data, t_command *command)
 {
 	int	i;
@@ -160,7 +159,7 @@ void	builtin_export(t_data *data, t_command *command)
 	}
 }
 
-/* builtin_unset: deletes a or several environment variables 
+/* builtin_unset: deletes a or several environment variables
 	if no variable is given, it just returns
 	TO DO: Does not work if variable name is given only*/
 
@@ -187,7 +186,7 @@ void	builtin_env(t_data *data, t_command *command)
 		return ;
 	}
 	i = 0;
-	while(command->argv[++i] != NULL)
+	while (command->argv[++i] != NULL)
 	{
 		if (!check_export_var(command->argv[i]))
 		{
@@ -199,7 +198,7 @@ void	builtin_env(t_data *data, t_command *command)
 	while (data->env[++i] != NULL)
 		printf("%s\n", data->env[i]);
 	i = 0;
-	while(command->argv[++i] != NULL)
+	while (command->argv[++i] != NULL)
 		printf("%s\n", command->argv[i]);
 }
 
@@ -224,22 +223,22 @@ void	builtin_exit(t_data *data, t_command *command, int i)
 	undirect(command, data);
 	printf("exit\n");
 	if (command->argv[1])
-                printf("minishell: exit: too many arguments\n");
+		printf("minishell: exit: too many arguments\n");
 	else
 		free_exit(data);
 }
 
 /* builtins: This function checks if one of the builtins is requested.
 	If it is, a function which handles the specific builtin is called.
-	Otherwise, this functions returns, without doing anything. 
+	Otherwise, this functions returns, without doing anything.
 	TO DO: Now all the functions write to stdout. As soon as redirections are done,
 	change 1 to fd.*/
 
-void    check_builtins(t_data *data, t_command *command, int i)
+void	check_builtins(t_data *data, t_command *command, int i)
 {
 	if (command->cmd == ECHO)
 		builtin_echo(command);
-	else if(command->cmd == CD)
+	else if (command->cmd == CD)
 		builtin_cd(data, command);
 	else if (command->cmd == PWD)
 		builtin_pwd();
@@ -251,6 +250,4 @@ void    check_builtins(t_data *data, t_command *command, int i)
 		builtin_env(data, command);
 	else if (command->cmd == EXIT)
 		builtin_exit(data, command, i);
-	
-	
 }

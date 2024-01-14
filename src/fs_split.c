@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sf_split.c                                         :+:      :+:    :+:   */
+/*   fs_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 13:12:04 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/14 18:09:26 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/14 10:02:43 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ static size_t	ft_len_str(char const *s, char c)
 	return (0);
 }*/
 
-static char	**ft_createstr(t_data *data, char const *s, char c, char **arr, int nb)
+static char	**ft_createstr(t_data *data, char const *s, char c,
+	char **arr, int nb)
 {
 	int	x;
 	int	y;
@@ -69,7 +70,8 @@ static char	**ft_createstr(t_data *data, char const *s, char c, char **arr, int 
 		y = 0;
 		while (*s == c && *s != '\0')
 			s++;
-		arr[x] = (char *)safe_malloc(data, (sizeof(char) * (ft_len_str(s, c) + 1)));
+		arr[x] = (char *)safe_malloc(data,
+				(sizeof(char) * (ft_len_str(s, c) + 1)));
 		if (!arr[x])
 			return (NULL);
 		while (*s != c && *s != '\0')
