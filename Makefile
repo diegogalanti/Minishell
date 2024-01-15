@@ -6,7 +6,7 @@
 #    By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/15 12:47:35 by tstahlhu          #+#    #+#              #
-#    Updated: 2024/01/13 15:40:02 by digallar         ###   ########.fr        #
+#    Updated: 2024/01/15 09:43:15 by digallar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,10 @@ INCLS		= $(addprefix ${DIRINCL}, $(addsuffix .h, ${INCL}))
 DIRLIBFT	= ./libft/
 
 SRC			= builtins error_exit init main memory parser commands_executor \
-				utils fs_split env_var redirections pipe
+				utils fs_split env_var redirections pipe command_splitter \
+				command_splitter2 vars_expander vars_expander2 vars_expander3 \
+				command_creator redirections_builder quotes_remover argv_builder \
+				argv_builder2 argv_allocator
 
 SRCS		= $(addprefix ${DIRSCR}, $(addsuffix .c, ${SRC}))
 

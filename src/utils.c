@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 12:03:17 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/14 09:55:44 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/14 10:57:05 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,4 +152,11 @@ char	*fs_substr(char const *s, unsigned int start, size_t len, t_command *c)
 	}
 	substr[i] = '\0';
 	return (substr);
+}
+
+int	ft_isspace(int c)
+{
+	c = (unsigned char)c;
+	return (c == '\n' || c == '\t' || c == '\f' || c == '\v' || c == ' '
+		|| c == '\r');
 }
