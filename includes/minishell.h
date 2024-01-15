@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/15 09:57:30 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/15 14:52:09 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef enum s_cmdtype {
 }	t_cmdtype;
 
 typedef enum s_parse_status {
-	WAITING_FOR_CHAR,
+	WFC,
 	FOUND_SQOT_WFC,
 	FOUND_SQOT_WFS,
 	FOUND_SQOT_IRED,
@@ -153,10 +153,12 @@ void			undirect(t_command *command, t_data *data);
 char			*fs_strdup(t_data *data, char *s);
 int				ft_strvcmp(const char *s1, const char *s2);
 char			*fs_strjoin(char const *s1, char const *s2, t_command *command);
+char			*ff_strjoin(char const *s1, char const *s2, t_data *data);
+
+/* utils2.c */
+int				ft_isspace(int c);
 char			*fs_substr(char const *s, unsigned int start,
 					size_t len, t_command *command);
-char			*ff_strjoin(char const *s1, char const *s2, t_data *data);
-int				ft_isspace(int c);
 
 /* fs_split.c */
 char			**fs_split(t_data *data, char const *s, char c);
@@ -187,6 +189,16 @@ int				expand_exit_status(t_command *comm, int start, int end, int iq);
 
 /* redirections_builder.c */
 int				build_redirections(t_command *command, int next_c);
+
+/* redirections_builder2.c */
+t_parse_status	check_space_rb(t_parse_status current, int start_i,
+					int *i, t_command *command);
+t_parse_status	check_quotesother_rb(char c, t_parse_status status);
+
+/* redictetions_builder3.c */
+int				create_redirection(t_command *cmd, int start, int end);
+void			print_error_pipe(void);
+void			print_error_nl(void);
 
 /* command_creator.c */
 void			create_command(t_data *data, int start, int end, int next_c);
