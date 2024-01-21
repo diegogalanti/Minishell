@@ -1,6 +1,6 @@
 # Minishell
 
-Fix (FIXED):
+### Fix (FIXED):
 
 input "" should result in 
 
@@ -11,11 +11,11 @@ Right now, the parser does not set command->argv
 
  " " works perfectly.
 
-Fix 2 (FIXED): Exit status
+### Fix 2 (FIXED): Exit status
 
 In parser: exit status is saved with quotes: "0" instead of 0.
 
-Fix 3: Multiple output redirections
+### Fix 3 (FIXED): Multiple output redirections
 
 Right now I am coding in a way that we will only keep the last redirection, however for output redirection it will be missing some behavior. E.g.:
 
@@ -27,20 +27,132 @@ echo "sample text" > abc > xyz
 
 Question: Do we want to replicate that behavior? If so, I think we could create an struct with specific data regarding redirections and in the command struct include a linked list of this struct. Maybe it is an overkill.
 
-Fix 4:
+Tatianas Answer: Somehow the updated parser does not delete the additional redirections, in the command->argv: 
+ls > abc > xzy
+results in command->argv[0] = ls, command->argv[1]= >, command->argv[2] = abc. 
+This is quite lucky, because with that I could now implement bashs behaviour (see redirections_multiple.c) by checking for multiple output redirections before executing the command.
+
+### Fix 4:
 
 Right now the behavior for open single/double quotes is quite unpredictable. From the subject we dont have to manage it, but to avoid bigger problems maybe I can print a parser error and abort the process.
 
-Fix 5:
+### Fix 5:
 Compilation with "make -n" (as required in evaluation sheet) gives the following error: 
 	
 	cp: cannot stat 'libft.a': No such file or directory
 	make: *** [Makefile:46: libft.a] Error 1
 
  DIEGO's comment: make -n basically means you show the commands that will be executed but do not execute them, so it will fail as we have to compile and copy the lib to be able to build, only ways to make it work is to have the lib already compiled and present in the folder instead of compiling it during build. I think we can explain to evaluator that when we build minishell, we also re build libft and copy the newly build to our project, so that is why it will fail, is expected. If you build normally with make and them use make -n, it will not fail as the lib is already in the folder.
+ TATIANAS COMMENT: Thank you for the explanation! That makes sense. I think you're right and we could argue that. Anyways, we have to look into which files we actually need from libft (if any). If it is just two or three we could just add those functions to our utils files.
 
-Fix 6:
+### Fix 6:
 clear does not work (should it?)
 
 DIEGO's comment: I think to make calling clear work we have to do stuff that is out of scope, however we can hardcode the following ft_printf instead of calling the clear command:
 ft_printf("\033[H\033[J");
+TATIANA's comment: Okay, thanks but for me there is no need to hardcode it.
+
+## TESTS RUN 
+
+### Passed Tests (which means minishell behaves as bash):
+
+PIPES
+
+    commands                       exit status
+
+    ls | grep file                  0
+    
+    ls | grp                        127
+
+    cat | cat | ls
+
+OUTPUT REDIRECTIONS
+
+    ls > test
+
+    ls > test1 > test2
+
+OUTPUT REDIRECTIONS TESTED FOR ALL BUILTINS 
+
+    echo "sample text" > abc
+
+    echo "sample text" > xyz > abc
+
+    echo "sample text" >> xyz >> abc
+
+    cd > abc
+
+    cd > xyz > abc
+
+    cd >> abc
+
+    cd >> xyz >> abc
+
+same for: pwd, export, unset, env, exit (exit status always: 0)
+
+    echo < test (note: echo cannot redirect input)
+
+INPUT REDIRECTIONS WITH HEREDOC
+
+    command                       exit status
+
+    cat << limiter                  0
+
+
+ERROR INPUT
+
+    sl | grep t                      1
+
+    sl | gfi something              127
+
+    sl | gfi something > test.txt   127
+
+@Diego: Feel free to add more test, especially error input :)
+
+### Tests that have not the exact same output but that I (Tatiana) think OK:
+
+#### 1
+    test > echo
+
+-> BASH: creates empty file "echo" (exits with 1) | MINISHELL: creates empty file "echo" AND outputs error message: "test: permission denied" (exits with 13)
+
+#### 2
+    ls | grep l > text.txt
+
+-> BASH: creates file text.txt and lists output from ls and grep in alphabetical order | minishell does the same but not in alphabetical order
+
+#### 3
+
+If user has no permissions for text file (chmod 111):
+
+    Minishell>$ ls | grep file > test.txt
+    minishell: test.txt: Permission denied
+
+-> same output, different exit status: bash (1), minishell (13) -> does that play a role?
+
+
+## FAILED TESTS
+
+#### Input redirection seems not to work properly:
+
+QUESTION: Why is "<" not read as redirection? 
+
+    Minishell>$ echo < mylist.txt 
+    < mylist.txt
+
+-> bash: empty line
+
+    Minishell>$ < mylist.txt grep t
+    <: command not found
+
+-> bash: outputs "tatiana"
+
+#### Same for heredoc redirection (<<) when piped:
+
+    Minishell>$ cat << limiter | grep hello > test
+    Redirection output = [test]
+    /usr/bin/cat: '<<': No such file or directory
+    /usr/bin/cat: limiter: No such file or directory
+
+
+

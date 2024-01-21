@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 15:05:54 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/14 09:45:36 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:14:24 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@
 	return (ret);
 }*/
 
-/* del_var: deletes given variable (del_var) from environment varialbe list (data->env)
+/* del_var: deletes given variable (del_var) 
+            from environment varialbe list (data->env)
 	This is done by allocating an array one size smaller than */
 
 char	**del_var(t_data *data, char **var, char *del_var)
@@ -87,7 +88,8 @@ char	**add_mod_var(t_data *data, char **var, char *new_var)
 	return (ret);
 }
 
-/* find_var: iterates through environment variable list and checks if var_name is a variable
+/* find_var: iterates through environment variable list 
+            and checks if var_name is a variable
 	In case it is, it returns a pointer to the value of the variable.
 	In case it is not, it returns a NULL pointer.*/
 
@@ -112,7 +114,8 @@ char	*find_var(char **var, char *var_name)
 	return (NULL);
 }
 
-/* is_var: iterates through environment variable list and checks if s is a variable
+/* is_var: iterates through environment variable list 
+        and checks if s is a variable
 	In case it is, it returns 1.
 	In case it is not, it returns 0.*/
 

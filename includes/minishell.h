@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/15 14:52:09 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:56:50 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@
 
 # define PROMPT "Minishell>$ "
 
-typedef enum s_cmdtype {
+typedef enum s_cmdtype
+{
 	ECHO,
 	CD,
 	PWD,
@@ -38,7 +39,8 @@ typedef enum s_cmdtype {
 	EXEC
 }	t_cmdtype;
 
-typedef enum s_parse_status {
+typedef enum s_parse_status
+{
 	WFC,
 	FOUND_SQOT_WFC,
 	FOUND_SQOT_WFS,
@@ -91,7 +93,7 @@ typedef struct s_data
 	int		nb_cmds; /*this is good to know when piping and forking*/
 	char	*user_input;
 	char	**env; /*these are the environment variables (will be inherited)*/
-	char	**shvar;	/*these are the shell variables (only present in this shell)*/
+	char	**shvar;/*shell variables (only present in this shell)*/
 	int		**pipe;
 	int		*pid;
 	int		stdin_cpy;
@@ -116,7 +118,12 @@ int				single_command(t_data *data, t_command *command);
 void			execute_command(t_data *data, t_command *command);
 void			execute(t_data *data);
 
-/* builtins.c */
+/* builtins.c & builtins2.c*/
+void        	print_export(char **env);
+int	            check_export_var(char *str);
+void	        builtin_export(t_data *data, t_command *command);
+void	        builtin_unset(t_data *data, t_command *command);
+void	        builtin_env(t_data *data, t_command *command);
 void			check_builtins(t_data *data, t_command *command, int i);
 
 /* pipe.c */
@@ -142,12 +149,16 @@ int				is_var(char **car, char *s);
 char			*find_var(char **var, char *s);
 
 /* redirections.c */
-int				set_redirections(t_command *cmd);
+int				set_redirections(t_command *c);
 int				close_redirections(t_command *cmd);
 int				check_redirections(t_data *data, int (*f)(t_command *));
 int				here_doc(t_command *command);
 int				redirect(t_command *command, t_data *data);
 void			undirect(t_command *command, t_data *data);
+
+/* redirections_multiple.c */
+int				find_mult_redir(char **argv);
+void			trunc_mult_redir(char **argv);
 
 /* utils.c */
 char			*fs_strdup(t_data *data, char *s);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memory.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 17:51:58 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/14 10:01:05 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:19:53 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,25 +40,6 @@ void	*safe_malloc(t_data *data, size_t size)
 	return (ptr);
 }
 
-/* frees an array of strings
-	To Do: list free has to be added so that there is no double free when calling free_data*/
-
-/*void	*free_arr_str(char **str)
-{
-	int	i;
-
-	i = -1;
-	if (str == NULL)
-		return (NULL);
-	while (str[++i])
-	{
-		free(str[i]);
-		str[i] = NULL;
-	}
-	free(str);
-	return (NULL);
-}*/
-
 void	*command_safe_malloc(t_command *command, size_t size)
 {
 	void	*ptr;
@@ -91,8 +72,7 @@ void	close_fd(int *fd)
 {
 	if (*fd != -1)
 	{
-		if (close(*fd) < 0)
-			printf("Minishell: Error: closing fd %i failed\n", *fd);
+		close(*fd);
 		*fd = -1;
 	}
 }
@@ -117,5 +97,6 @@ int	close_all_fd(t_data *data)
 	}
 	check_redirections(data, close_redirections);
 	close_fd(&data->stdout_cpy);
+	close_fd(&data->stdin_cpy);
 	return (1);
 }

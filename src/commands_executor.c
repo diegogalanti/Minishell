@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_executor.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/14 09:57:29 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:30:04 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,9 @@ int	single_command(t_data *data, t_command *command)
 	}
 	else
 	{
-	//	redirect(command);
 		check_builtins(data, command, -2);
-		undirect(command, data);
 	}
+	undirect(command, data);
 	return (1);
 }
 
@@ -99,7 +98,6 @@ void	execute_command(t_data *data, t_command *command)
 {
 	if (!command || !command->argv || !command->argv[0])
 	{
-		//dup2(data->stdout_cpy, STDOUT_FILENO);
 		printf("%s: command not found\n", command->argv[0]);
 		exit_child (data, 127);
 	}
@@ -108,12 +106,13 @@ void	execute_command(t_data *data, t_command *command)
 		command->argv[0] = find_path(data, command->argv[0]);
 		if (access(command->argv[0], F_OK))
 		{
-			//dup2(data->stdout_cpy, STDOUT_FILENO);
 			printf("%s: command not found\n", command->argv[0]);
 			exit_child (data, 127);
 		}
 	}
-	//redirect(command);
+	redirect(command, data);
+	if (find_mult_redir(command->argv))
+		trunc_mult_redir(command->argv);
 	execve(command->argv[0], command->argv, NULL);
 	undirect(command, data);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));

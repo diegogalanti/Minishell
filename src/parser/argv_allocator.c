@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   argv_allocator.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:53:29 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/15 14:35:42 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:28:18 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

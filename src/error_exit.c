@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_exit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 14:44:27 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/14 10:01:40 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:18:31 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ void	free_data(t_data *data)
 		free(data->user_input);
 		data->user_input = NULL;
 	}
-	/* tat added data->env because it is allocated with ft_split for test purposes,
+}
+
+/* tat added data->env because it is allocated with ft_split for test purposes,
 	can be deleted as soon as diego has the parser finished */
 	/*i = -1;
 	if (data && data->env && data->env[0])
@@ -41,7 +43,6 @@ void	free_data(t_data *data)
 		free(data->env);
 		data->env = NULL;
 	}*/
-}
 
 void	free_command(t_command *command)
 {

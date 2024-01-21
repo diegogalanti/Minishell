@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 15:54:59 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/14 10:00:08 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:31:31 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,20 @@ int	creat_pipe(t_data *data)
 		if (pipe(data->pipe[i]) < 0)
 			return (0);
 	}
-	data->stdout_cpy = dup(STDOUT_FILENO);
 	return (1);
 }
+
+/* set_fd: assigns the right file descriptors for command
+	according to redirections and pipes
+	If it is the 1. command (i = 0) and there is no redirection
+		(command->fd_in < 0) fd_in is set to stdin 
+	The same applies for the last command (i = nb_cmds - 1) and
+		which is set to stdout if not an fd is set for redirection
+	Else fd_in and fd_out are set to the right pipe end to write or
+		read from it. 
+	Last, all other pipe ends are closed, so that the process
+		is not waiting for them but exits when finished. 
+*/
 
 int	set_fd(t_data *data, t_command *command, int i)
 {
@@ -51,9 +62,9 @@ int	set_fd(t_data *data, t_command *command, int i)
 	while (++i < data->nb_cmds - 1)
 	{
 		if (data->pipe[i][0] != command->fd_in)
-			close_fd(&data->pipe[i][0]);
+			close(data->pipe[i][0]);
 		if (data->pipe[i][1] != command->fd_out)
-			close_fd(&data->pipe[i][1]);
+			close(data->pipe[i][1]);
 	}
 	return (1);
 }
@@ -61,7 +72,6 @@ int	set_fd(t_data *data, t_command *command, int i)
 void	child_process(t_data *data, t_command *command, int i)
 {
 	set_fd(data, command, i);
-	//printf("fd_in: %i, fd_out: %i\n", command->fd_in, command->fd_out);
 	if (command->cmd == EXEC)
 		execute_command(data, command);
 	else
@@ -72,16 +82,18 @@ void	child_process(t_data *data, t_command *command, int i)
 	exit_child (data, 1);
 }
 
-/* get_child_exit_status: stores the childs exit status in data->exit_status with which shell exits
-	The child's exit status is only stored if child exited normally (checked with macro WIFEXITED)
-	If it exited normally, the child's status is retrieved with the macro WEXITSTATUS*/
+/* get_child_exit_status: 
+    stores the childs exit status in data->exit_status with which shell exits
+	The child's exit status is only stored if child exited normally 
+        (checked with macro WIFEXITED)
+	If it exited normally, the child's status is retrieved 
+        with the macro WEXITSTATUS*/
 
 void	get_child_exit_status(t_data *data, int child_exit_status)
 {
 	if (WIFEXITED(child_exit_status))
 	{
 		data->exit_status = WEXITSTATUS(child_exit_status);
-		//printf("Exit status of child was: %i, %i\n", child_exit_status, data->exit_status);
 	}
 }
 

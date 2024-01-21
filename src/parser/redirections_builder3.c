@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections_builder3.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:44:32 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/15 14:50:09 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/19 16:34:11 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

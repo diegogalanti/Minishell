@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:52:33 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/14 09:58:31 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:52:46 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,13 @@
 
 int	init_env(t_data *data, char **env)
 {
-	// int	i;
-	// i = 0;
-	// while (env[i] != NULL)
-	// 	i++;
-	// if (!(data->env = safe_malloc(data, (i + 1) * sizeof(char *))))
-	// 	return (0);
-	// i = -1;
-	// while (env[++i] != NULL)
-	// 	data->env[i] = fs_strdup(data, env[i]);
-	// data->env[i] = NULL;
 	data->env = env;
 	return (1);
 }
 
 /* data struct is initialized
-	stdout_cpy is set to -1 so that it will not attempt to be close if unititialized*/
+	stdout_cpy is set to -1 
+    so that it will not attempt to be close if unititialized*/
 
 void	*init_data(char **env)
 {

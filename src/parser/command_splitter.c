@@ -56,6 +56,12 @@ static t_parse_status	check_pipe_cs(t_data *data, int *start_i, int i,
 	return (current);
 }
 
+/* Tatiana: I uncommented the nb_cmds count here
+	because it does not seem to count them. If I understand
+	the code correctly, check_final_cs is only called once in 
+	split_commands which is also only called once. 
+	Thus, data->nb_cmds will always be 1.*/
+
 static void	check_final_cs(t_data *data, int start_i, int i,
 	t_parse_status status)
 {
@@ -64,7 +70,7 @@ static void	check_final_cs(t_data *data, int start_i, int i,
 		create_command(data, start_i, i, 1);
 		if (data->exit_status != 0)
 			return ;
-		data->nb_cmds++;
+		//data->nb_cmds++;
 	}
 }
 

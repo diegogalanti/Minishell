@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 12:03:17 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/15 10:29:51 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/21 17:20:43 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ char	*fs_strdup(t_data *data, char *s)
 }
 
 /* string variable compare: compares environment variables
-	This function is like ft_strcmp but it only compares the strings until an equal sign
-	is found in s1.*/
+	This function is like ft_strcmp 
+    but it only compares the strings until an equal sign is found in s1.*/
 
 int	ft_strvcmp(const char *s1, const char *s2)
 {
