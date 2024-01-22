@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:44:14 by tstahlhu          #+#    #+#             */
-/*   Updated: 2023/11/19 20:30:18 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/22 12:27:27 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* To Do:
+/* Maybe implement (This is not required by the subject)
 	environment variables: if "some_var=some_value" add it to data->shvar
 	this step should come after builtins and commands were checked:
 	while (command->argv[++i] != NULL)

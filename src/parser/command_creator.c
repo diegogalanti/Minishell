@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:52:07 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/21 17:28:59 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/22 14:30:40 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 static void	add_type(t_command *command)
 {
-	if (!strncmp(command->argv[0], "echo", ft_strlen(command->argv[0])))
+    if (!command->argv[0])
+        return ;
+	else if (!strncmp(command->argv[0], "echo", ft_strlen(command->argv[0])))
 		command->cmd = ECHO;
 	else if (!strncmp(command->argv[0], "cd ", ft_strlen(command->argv[0])))
 		command->cmd = CD;

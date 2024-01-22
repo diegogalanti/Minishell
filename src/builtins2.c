@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 17:38:52 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/21 17:56:57 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/22 11:40:41 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,10 @@ int	check_export_var(char *str)
 	return (1);
 }
 
-/* TO DO: change variables*/
+/* builtin_export: 
+    "export var_name=var_value" creates a new variable
+        or changes the value if variable already exists */
+        
 void	builtin_export(t_data *data, t_command *command)
 {
 	int	i;
@@ -80,8 +83,7 @@ void	builtin_export(t_data *data, t_command *command)
 }
 
 /* builtin_unset: deletes a or several environment variables
-	if no variable is given, it just returns
-	TO DO: Does not work if variable name is given only*/
+	if no variable is given, it just returns*/
 
 void	builtin_unset(t_data *data, t_command *command)
 {

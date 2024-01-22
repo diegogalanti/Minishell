@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/21 17:56:50 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/22 14:11:49 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ typedef struct s_command
 	char		**env;
 	t_list		*free_list;
 }			t_command;
+
+extern char **env;
 
 typedef struct s_data
 {

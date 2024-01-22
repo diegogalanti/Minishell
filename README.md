@@ -107,6 +107,15 @@ ERROR INPUT
 
     sl | gfi something > test.txt   127
 
+    echo -nnnnnnnnnnnn hello        0
+
+    > testfile
+
+Note: The last test (no command but a redirection) caused a segfault. I fixed it by adding in src/parser/command_creator.c:17:
+
+    if (!command->argv[0])
+        return ;
+
 @Diego: Feel free to add more test, especially error input :)
 
 ### Tests that have not the exact same output but that I (Tatiana) think OK:
@@ -129,6 +138,13 @@ If user has no permissions for text file (chmod 111):
     minishell: test.txt: Permission denied
 
 -> same output, different exit status: bash (1), minishell (13) -> does that play a role?
+
+#### 4 (please look into this one, Diego)
+
+    command                         exit status
+    ls | >testfile                  1
+
+In bash the exit status is 0. Moreover, in minishell "testfile" contains an empty line. I tried to find the error and found out that command->cmd contains "ECHO" before it is assigned. But I could not find out, why. Could you please look into it, Diego?
 
 
 ## FAILED TESTS
@@ -166,6 +182,12 @@ Minishell prints an empty line. Whereas bash returns:
     Command '' not found
 
 Same for double quotes. Can you easily change in the parser that empty quotes are not interpreted but saved in command->argv? 
+
+## Open Questions
+
+#### 1. echo something ; something_else
+
+In bash ";" is interpreted as separator, thus "something_else" is interpreted as command. We do not have to implement that, right?
 
 
 

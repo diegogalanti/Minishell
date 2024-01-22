@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:46:01 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/21 17:40:27 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/22 11:36:29 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,7 @@
 /* builtin_echo: mimicks "echo" in bash
 	writes all the characters after "echo" to stdout and prints a newline
 	if there are more than one space, the superflue spaces are omitted
-	with "echo -n" the newline at the end is not printed
-	TO DO: ; -> after ";" is interpreted as command 
-		(Do we have to implement that?) */
+	with "echo -n" the newline at the end is not printed */
 
 void	builtin_echo(t_command *command)
 {
@@ -48,8 +46,6 @@ void	builtin_echo(t_command *command)
 	This string is the printed on the screen.
 	Questions: What if getcwd does not behave as it should?
 		If it returns NULL for example?
-		How to we deal with redirections? this could have an impact on
-		whether to use printf or ft_putstr
 		Is buffer size good?*/
 
 void	builtin_pwd(void)
