@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:46:01 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/22 11:36:29 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/22 18:43:05 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ void	builtin_echo(t_command *command)
 
 	i = 1;
 	n = 0;
-	if (command->argv[i] && !strncmp(command->argv[i], "-n", 2))
+	while (command->argv[i] && !strncmp(command->argv[i], "-n", ft_strlen(command->argv[i])))
 	{
-		n = 1;
+		n++;
 		i++;
 	}
 	while (command->argv[i] != NULL)
@@ -96,7 +96,7 @@ void	builtin_exit(t_data *data, t_command *command, int i)
 {
 	if (data->pipe && i >= 0)
 	{
-		printf("exit\n");
+		//printf("exit\n");
 		if (command->argv[1] && data->pid[i] == 0)
 		{
 			dup2(data->stdout_cpy, STDOUT_FILENO);

@@ -109,12 +109,25 @@ ERROR INPUT
 
     echo -nnnnnnnnnnnn hello        0
 
+    echo anything | exit            0
+
+    echo -n -n hi                   0
+
+    echo "-n -n -n" -n hi           0
+
+    env -i ./minishell
+
+
     > testfile
 
 Note: The last test (no command but a redirection) caused a segfault. I fixed it by adding in src/parser/command_creator.c:17:
 
     if (!command->argv[0])
         return ;
+
+    
+
+
 
 @Diego: Feel free to add more test, especially error input :)
 
@@ -170,6 +183,23 @@ QUESTION: Why is "<" not read as redirection?
     /usr/bin/cat: '<<': No such file or directory
     /usr/bin/cat: limiter: No such file or directory
 
+    Minishell>$ sleep 3 | << end cat > out1 | echo2 | << end2 cat > out2 | echo 3
+    Command input = [sleep 3 ]
+    Command has 2 arguments.
+    Command input = [ << end cat > out1 ]
+    Command has 5 arguments.
+    Command input = [ echo2 ]
+    Command has 1 arguments.
+    Command input = [ << end2 cat > out2 ]
+    Command has 5 arguments.
+    Command input = [ echo 3]
+    Command has 2 arguments.
+    Argument = [3]
+    <<: command not found
+    3   
+    echo2: command not found
+    <<: command not found
+
 #### Empty quotes (single and double)
 
     Minishell>$ ''
@@ -182,6 +212,18 @@ Minishell prints an empty line. Whereas bash returns:
     Command '' not found
 
 Same for double quotes. Can you easily change in the parser that empty quotes are not interpreted but saved in command->argv? 
+
+#### # sign
+
+    #echo echo wtf u execute? > ~/echo 2> /dev/null; chmod 777 ~/echo;export EXPATH="$PATH" PATH="/Users/$USER:$PATH"
+
+should not print anything. Minishell prints: " #echo: command not found"
+
+### More Tests
+
+on https://github.com/ChewyToast/mpanic/tree/main/test/mandatory
+
+-> did almost all commands in echo.txt
 
 ## Open Questions
 
