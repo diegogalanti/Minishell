@@ -154,5 +154,19 @@ QUESTION: Why is "<" not read as redirection?
     /usr/bin/cat: '<<': No such file or directory
     /usr/bin/cat: limiter: No such file or directory
 
+#### Empty quotes (single and double)
+
+    Minishell>$ ''
+    Command input = ['']
+    Command has 1 arguments.
+    Argument = []
+
+Minishell prints an empty line. Whereas bash returns:
+
+    Command '' not found
+
+Same for double quotes. Can you easily change in the parser that empty quotes are not interpreted but saved in command->argv? 
+
+
 
 

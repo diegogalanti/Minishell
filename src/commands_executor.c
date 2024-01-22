@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/21 17:30:04 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/22 11:03:18 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ char	*find_path(t_data *data, char *cmd)
 
 	dir = fs_split(data, find_var(data->env, "PATH"), ':');
 	if (dir == NULL)
-		return (NULL);
+		return (cmd);
 	i = -1;
 	while (dir[++i])
 	{
