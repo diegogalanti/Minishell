@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/22 11:03:18 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/22 21:09:13 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void	execute_command(t_data *data, t_command *command)
 	redirect(command, data);
 	if (find_mult_redir(command->argv))
 		trunc_mult_redir(command->argv);
-	execve(command->argv[0], command->argv, NULL);
+	execve(command->argv[0], command->argv, data->env);
 	undirect(command, data);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
 	exit_child (data, errno);
