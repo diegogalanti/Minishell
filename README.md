@@ -207,7 +207,7 @@ QUESTION: Why is "<" not read as redirection?
     echo2: command not found
     <<: command not found
 
-#### Empty quotes (single and double)
+#### Empty quotes (single and double) (FIXED)
 
     Minishell>$ ''
     Command input = ['']
