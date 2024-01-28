@@ -220,6 +220,8 @@ Minishell prints an empty line. Whereas bash returns:
 
 Same for double quotes. Can you easily change in the parser that empty quotes are not interpreted but saved in command->argv? 
 
+DIEGO: It was working, not sure how i brake it. For me it was easier to set command->cmd to a new value "NOT_FOUND", it it ok?
+
 #### # sign (FIXED)
 
     #echo echo wtf u execute? > ~/echo 2> /dev/null; chmod 777 ~/echo;export EXPATH="$PATH" PATH="/Users/$USER:$PATH"
