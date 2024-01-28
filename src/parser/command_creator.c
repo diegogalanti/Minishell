@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_creator.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:52:07 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/28 16:07:12 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/28 17:40:03 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	create_command(t_data *data, int start, int end, int next_c)
 	command->exit_status = data->exit_status;
 	command->found_limiter = 0;
 	command->append_mode = -1;
-	ft_printf("Command input = [%s]\n", command->cmd_input);
+	//ft_printf("Command input = [%s]\n", command->cmd_input);
 	expand_vars(command);
 	data->exit_status = build_redirections(command, next_c);
 	if (data->exit_status != 0)

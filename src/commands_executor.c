@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/22 21:09:13 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/28 15:20:37 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,10 @@ int	single_command(t_data *data, t_command *command)
 	}
 	else
 	{
-		check_builtins(data, command, -2);
+		data->exit_status = check_builtins(data, command, -2);
 	}
 	undirect(command, data);
-	return (1);
+	return (0);
 }
 
 char	*find_path(t_data *data, char *cmd)
@@ -106,7 +106,7 @@ void	execute_command(t_data *data, t_command *command)
 		command->argv[0] = find_path(data, command->argv[0]);
 		if (access(command->argv[0], F_OK))
 		{
-			printf("%s: command not found\n", command->argv[0]);
+			printf("minishell: %s: command not found\n", command->argv[0]);
 			exit_child (data, 127);
 		}
 	}

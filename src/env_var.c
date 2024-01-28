@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 15:05:54 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/21 17:14:24 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/27 17:02:28 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,59 @@
 	return (ret);
 }*/
 
+char	**add_var(t_data *data, char **var, char *new_var)
+{
+	int		i;
+	char	**ret;
+
+	i = 0;
+	while (var != NULL && var[i] != NULL)
+		i++;
+	ret = safe_malloc(data, ((i + 2) * sizeof(char *)));
+	if (!ret)
+		return (NULL);
+	i = 0;
+	while (var != NULL && var[i] != NULL)
+	{
+		ret[i] = fs_strdup(data, var[i]);
+		i++;
+	}
+	ret[i] = fs_strdup_env_var(data, new_var);
+	ret[++i] = NULL;
+	return (ret);
+}
+
+char	**mod_var(t_data *data, char **var, char *new_var, int x)
+{
+	int		i;
+	char	**ret;
+
+	i = 0;
+	while (var != NULL && var[i] != NULL)
+		i++;
+	ret = safe_malloc(data, ((i + 1) * sizeof(char *)));
+	if (!ret)
+		return (NULL);
+	i = 0;
+	while (var != NULL && var[i] != NULL)
+	{
+		if (ft_strvcmp(var[i], new_var))
+			ret[i] = fs_strdup(data, var[i]);
+		else
+		{
+			if (new_var[x] == '+')
+				ret[i] = ff_strjoin(var[i], (new_var + x + 2), data);
+			else
+				ret[i] = fs_strdup(data, new_var);
+		}
+		i++;
+	}
+	ret[i] = NULL;
+	return (ret);
+}
+
 /* del_var: deletes given variable (del_var) 
-            from environment varialbe list (data->env)
+			from environment varialbe list (data->env)
 	This is done by allocating an array one size smaller than */
 
 char	**del_var(t_data *data, char **var, char *del_var)
@@ -42,26 +93,29 @@ char	**del_var(t_data *data, char **var, char *del_var)
 
 	i = 0;
 	j = 0;
-	if (!is_var(var, del_var))
+	if (!is_var(var, del_var) || !var)
 		return (var);
 	while (var != NULL && var[i] != NULL)
 		i++;
-	ret = safe_malloc(data, (i * sizeof(char *)));
+	if (i == 1)
+		return (NULL);
+	ret = safe_malloc(data, (sizeof(char *) * (i + 1)));
 	if (!ret)
 		return (NULL);
-	i = -1;
-	while (var != NULL && var[++i] != NULL)
+	i = 0;
+	while (var != NULL && var[i] != NULL)
 	{
 		if (ft_strvcmp(var[i], del_var))
 			ret[i - j] = fs_strdup(data, var[i]);
 		else
 			j++;
+        i++;
 	}
-	ret[i + j] = NULL;
+	ret[i - j] = NULL;
 	return (ret);
 }
 
-char	**add_mod_var(t_data *data, char **var, char *new_var)
+/*char	**add_mod_var(t_data *data, char **var, char *new_var)
 {
 	int		i;
 	int		add;
@@ -74,22 +128,51 @@ char	**add_mod_var(t_data *data, char **var, char *new_var)
 	ret = safe_malloc(data, ((i + 1 + add) * sizeof(char *)));
 	if (!ret)
 		return (NULL);
-	i = -1;
-	while (var != NULL && var[++i] != NULL)
+	i = 0;
+	while (var != NULL && var[i] != NULL)
 	{
 		if (ft_strvcmp(var[i], new_var))
 			ret[i] = fs_strdup(data, var[i]);
 		else
 			ret[i] = fs_strdup(data, new_var);
+		i++;
 	}
 	if (add == 1)
 		ret[i] = fs_strdup(data, new_var);
 	ret[++i] = NULL;
 	return (ret);
-}
+}*/
+
+/*char	**add_join_var(t_data *data, char **var, char *new_var)
+{
+	int		i;
+	int		add;
+	char	**ret;
+
+	add = 1 - is_var(var, new_var);
+	i = 0;
+	while (var != NULL && var[i] != NULL)
+		i++;
+	ret = safe_malloc(data, ((i + 1 + add) * sizeof(char *)));
+	if (!ret)
+		return (NULL);
+	i = 0;
+	while (var != NULL && var[i] != NULL)
+	{
+		if (ft_strvcmp(var[i], new_var))
+			ret[i] = fs_strdup(data, var[i]);
+		else
+			ret[i] = fs_strdup(data, new_var);
+		i++;
+	}
+	if (add == 1)
+		ret[i] = fs_strdup(data, new_var);
+	ret[++i] = NULL;
+	return (ret);
+}*/
 
 /* find_var: iterates through environment variable list 
-            and checks if var_name is a variable
+			and checks if var_name is a variable
 	In case it is, it returns a pointer to the value of the variable.
 	In case it is not, it returns a NULL pointer.*/
 
@@ -115,7 +198,7 @@ char	*find_var(char **var, char *var_name)
 }
 
 /* is_var: iterates through environment variable list 
-        and checks if s is a variable
+		and checks if s is a variable
 	In case it is, it returns 1.
 	In case it is not, it returns 0.*/
 

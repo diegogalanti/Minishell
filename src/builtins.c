@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:46:01 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/22 18:43:05 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/28 15:21:00 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 	if there are more than one space, the superflue spaces are omitted
 	with "echo -n" the newline at the end is not printed */
 
-void	builtin_echo(t_command *command)
+int	builtin_echo(t_command *command)
 {
 	int	i;
 	int	n;
@@ -38,6 +38,7 @@ void	builtin_echo(t_command *command)
 	}
 	if (n == 0)
 		printf("\n");
+    return (0);
 }
 
 /* builtin_pwd: mimicks the behaviour of pwd in bash
@@ -59,76 +60,23 @@ void	builtin_pwd(void)
 	buf = NULL;
 }
 
-/* builtin_cd: mimicks the behaviour of cd in bash
-	it accepts absolute and relative path and .. and .
-	as well as -- and -
-
-	To Do (maybe, not sure if we have to):
-	- use errno for error message
-	- update OLDPWD so that cd - works properly*/
-
-void	builtin_cd(t_data *data, t_command *command)
-{
-	int	ret;
-
-	undirect(command, data);
-	if (command->argv[1] == NULL)
-	{
-		ret = chdir(ft_strtrim(find_var(data->env, "HOME"), "="));
-		return ;
-	}
-	if (!strncmp(command->argv[1], "-", ft_strlen(command->argv[1])))
-		ret = chdir(ft_strtrim(find_var(data->env, "OLDPWD"), "="));
-	else if (!strncmp(command->argv[1], "--", ft_strlen(command->argv[1])))
-		ret = chdir(ft_strtrim(find_var(data->env, "HOME"), "="));
-	else
-		ret = chdir(command->argv[1]);
-	if (ret == 0)
-		return ;
-	else
-		printf("minishell: cd: path not found\n");
-}
-
-/* builtin_exit: exits the shell
-		if arguments are given it does not exit but prints error message*/
-
-void	builtin_exit(t_data *data, t_command *command, int i)
-{
-	if (data->pipe && i >= 0)
-	{
-		//printf("exit\n");
-		if (command->argv[1] && data->pid[i] == 0)
-		{
-			dup2(data->stdout_cpy, STDOUT_FILENO);
-			close(data->stdout_cpy);
-			printf("minishell: exit: too many arguments\n");
-			exit_child(data, 1);
-		}
-		else
-			exit_child(data, 0);
-	}
-	undirect(command, data);
-	printf("exit\n");
-	if (command->argv[1])
-		printf("minishell: exit: too many arguments\n");
-	else
-		free_exit(data);
-}
-
 /* builtins: This function checks if one of the builtins is requested.
 	If it is, a function which handles the specific builtin is called.
 	Otherwise, this functions returns, without doing anything.
 	*/
 
-void	check_builtins(t_data *data, t_command *command, int i)
+int	check_builtins(t_data *data, t_command *command, int i)
 {
+    int status;
+
 	redirect(command, data);
 	if (find_mult_redir(command->argv))
 		trunc_mult_redir(command->argv);
+    status = 0;
 	if (command->cmd == ECHO)
-		builtin_echo(command);
+		status = builtin_echo(command);
 	else if (command->cmd == CD)
-		builtin_cd(data, command);
+		status = builtin_cd(data, command);
 	else if (command->cmd == PWD)
 		builtin_pwd();
 	else if (command->cmd == EXPORT)
@@ -139,4 +87,5 @@ void	check_builtins(t_data *data, t_command *command, int i)
 		builtin_env(data, command);
 	else if (command->cmd == EXIT)
 		builtin_exit(data, command, i);
+    return (status);
 }

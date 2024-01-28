@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 16:05:32 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/28 17:41:53 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,12 +121,31 @@ void			execute_command(t_data *data, t_command *command);
 void			execute(t_data *data);
 
 /* builtins.c & builtins2.c*/
+
+int 			check_builtins(t_data *data, t_command *command, int i);
+
+/* builtin_cd.c */
+int 	        builtin_cd(t_data *data, t_command *command);
+
+/* builtin_exit.c */
+int             check_exit_n_input(char *str);
+int             get_exit_status(t_data *data, char *input);
+void	        builtin_exit(t_data *data, t_command *command, int i);
+
+/* builtin_export.c */
+int         	check_var_name(char *str);
+void	        add_mod_var(t_data *data, char *var);
 void        	print_export(char **env);
-int	            check_export_var(char *str);
 void	        builtin_export(t_data *data, t_command *command);
 void	        builtin_unset(t_data *data, t_command *command);
 void	        builtin_env(t_data *data, t_command *command);
-void			check_builtins(t_data *data, t_command *command, int i);
+
+/* env_var.c: helper functions for builtins env, export, unset*/
+char	        **add_var(t_data *data, char **var, char *new_var);
+char	        **mod_var(t_data *data, char **var, char *new_var, int x);
+char			**del_var(t_data *data, char **var, char *del_var);
+char			*find_var(char **var, char *s);
+int				is_var(char **car, char *s);
 
 /* pipe.c */
 int				creat_pipe(t_data *data);
@@ -143,13 +162,6 @@ void			exit_child(t_data *data, int exit_status);
 /* parser.c */
 void			parse_input(t_data *data);
 int				check_commented(t_data *data);
-
-/* env_var.c */
-//char   **add_var(t_data *data, char **var, char *new_var);
-char			**del_var(t_data *data, char **var, char *del_var);
-char			**add_mod_var(t_data *data, char **var, char *new_var);
-int				is_var(char **car, char *s);
-char			*find_var(char **var, char *s);
 
 /* redirections.c */
 int				set_redirections(t_command *c);
@@ -168,14 +180,20 @@ char			*fs_strdup(t_data *data, char *s);
 int				ft_strvcmp(const char *s1, const char *s2);
 char			*fs_strjoin(char const *s1, char const *s2, t_command *command);
 char			*ff_strjoin(char const *s1, char const *s2, t_data *data);
+char            *fs_cpy_var(char *old_var, char *new_var, t_data *data);
+char	        *fs_strdup_env_var(t_data *data, char *s);
 
 /* utils2.c */
 int				ft_isspace(int c);
 char			*fs_substr(char const *s, unsigned int start,
 					size_t len, t_command *command);
+int	            has_equal_sign(char *str);
 
 /* fs_split.c */
 char			**fs_split(t_data *data, char const *s, char c);
+
+/* fs_itoa.c */
+char	        *fs_itoa(int n, t_data *data);
 
 /* command_splitter.c */
 void			split_commands(t_data *data);

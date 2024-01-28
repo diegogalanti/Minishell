@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 15:54:59 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/21 17:31:31 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/28 15:25:02 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,15 +71,16 @@ int	set_fd(t_data *data, t_command *command, int i)
 
 void	child_process(t_data *data, t_command *command, int i)
 {
+    command->exit_status = 1;
 	set_fd(data, command, i);
 	if (command->cmd == EXEC)
 		execute_command(data, command);
 	else
 	{
-		check_builtins(data, command, i);
+		command->exit_status = check_builtins(data, command, i);
 		undirect(command, data);
 	}
-	exit_child (data, 1);
+	exit_child (data, command->exit_status);
 }
 
 /* get_child_exit_status: 
@@ -120,7 +121,8 @@ int	pipe_commands(t_data *data)
 	i = -1;
 	while (++i < data->nb_cmds)
 	{
-		waitpid(0, &child_exit_status, 0);
+		//waitpid(0, &child_exit_status, 0);
+        waitpid(data->pid[i], &child_exit_status, 0);
 		get_child_exit_status(data, child_exit_status);
 	}
 	return (1);
