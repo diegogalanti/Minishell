@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:52:33 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/22 14:14:30 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/28 16:53:33 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,25 @@
 
 int	init_env(t_data *data, char **env)
 {
+	int     shlvl;
+	char    *c;
+
 	data->env = env;
+	if (!ft_strvcmp(find_var(data->env, "SHELL="), "minishell"))
+	{
+		shlvl = ft_atoi(find_var(data->env, "SHLVL="));
+		if (shlvl >= 5000000)
+		{
+			printf("minishell: warning: shell level (%i) too high, resetting to 1\n", shlvl);
+			shlvl = 0;
+		}
+		c = fs_itoa((shlvl + 1), data);
+		add_mod_var(data, ff_strjoin("SHLVL=", c, data));
+	}
+	else
+	{
+		add_mod_var(data, ff_strjoin("SHELL=", "minishell", data));
+	}
 	return (1);
 }
 
@@ -40,7 +58,7 @@ int	init_env(t_data *data, char **env)
 
 /* data struct is initialized
 	stdout_cpy is set to -1 
-    so that it will not attempt to be close if unititialized*/
+	so that it will not attempt to be close if unititialized*/
 
 void	*init_data(char **env)
 {

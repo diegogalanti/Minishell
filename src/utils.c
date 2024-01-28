@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 12:03:17 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/21 17:20:43 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/26 12:35:56 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,34 @@ char	*fs_strdup(t_data *data, char *s)
 	return (cpy);
 }
 
+
+char	*fs_strdup_env_var(t_data *data, char *s)
+{
+	char	*cpy;
+	int		i;
+	int		j;
+
+	cpy = (char *)safe_malloc(data, (sizeof(*cpy) * (ft_strlen(s) + 1)));
+	if (!cpy)
+		return (NULL);
+	i = 0;
+	while (s[i] != '=' && s[i] != '+' && s[i] != '\0')
+	{
+		cpy[i] = s[i];
+		i++;
+	}
+	j = i;
+	if (s[i] == '+')
+		i++;
+	while (s[i] != '\0')
+		cpy[j++] = s[i++];
+	cpy[j] = '\0';
+	return (cpy);
+}
+
 /* string variable compare: compares environment variables
 	This function is like ft_strcmp 
-    but it only compares the strings until an equal sign is found in s1.*/
+	but it only compares the strings until an equal sign is found in s1.*/
 
 int	ft_strvcmp(const char *s1, const char *s2)
 {
@@ -45,65 +70,19 @@ int	ft_strvcmp(const char *s1, const char *s2)
 	i = 0;
 	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0' && s1[i] != '=')
 		i++;
-	if (s1[i] == '=' && (s2[i] == '\0' || s2[i] == '='))
+//	if (s1[i] == '=' && (s2[i] == '\0' || s2[i] == '=' || s2[i] == '+'))
+	//if ((s1[i] == '=' || s1[i] == '\0') && s2[i] == '\0')
+	if (s1[i] == s2[i])
+		return (0);
+	else if (s1[i] == '\0')
+	{
+		if (s2[i] == '=' || (s2[i] == '+' && s2[i + 1] == '='))
+			return (0);
+	}
+	else if (s1[i] == '=' && ((s2[i] == '+' && s2[i + 1] == '=') || s2[i] == '\0'))
 		return (0);
 	else
 		return (1);
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-char	*ff_strjoin(char const *s1, char const *s2, t_data *data)
-{
-	char	*str;
-	int		len;
-	int		i;
-	int		j;
-
-	len = (ft_strlen(s1) + ft_strlen(s2));
-	str = (char *)safe_malloc(data, sizeof(*str) * (len + 1));
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (s1[i] != '\0')
-	{
-		str[i] = s1[i];
-		i++;
-	}
-	j = 0;
-	while (s2[j] != '\0')
-	{
-		str[i] = s2[j];
-		i++;
-		j++;
-	}
-	str[i] = '\0';
-	return (str);
-}
-
-char	*fs_strjoin(char const *s1, char const *s2, t_command *command)
-{
-	char	*str;
-	int		len;
-	int		i;
-	int		j;
-
-	len = (ft_strlen(s1) + ft_strlen(s2));
-	str = (char *)command_safe_malloc(command, sizeof(*str) * (len + 1));
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (s1[i] != '\0')
-	{
-		str[i] = s1[i];
-		i++;
-	}
-	j = 0;
-	while (s2[j] != '\0')
-	{
-		str[i] = s2[j];
-		i++;
-		j++;
-	}
-	str[i] = '\0';
-	return (str);
-}

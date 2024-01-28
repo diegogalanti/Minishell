@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   argv_builder.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:53:29 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/28 16:16:18 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/28 17:37:58 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	check_final_ab(t_command *command, int start_i, int i, int pos)
 	command->argv[pos] = fs_substr(command->cmd_input, start_i,
 			i - start_i, command);
 	remove_quotes(command->argv[pos]);
-	ft_printf("Argument = [%s]\n", command->argv[pos]);
+	//ft_printf("Argument = [%s]\n", command->argv[pos]);
 }
 
 static void	start_vars(t_parse_status *status, int *start_i, int *i, int *pos)
