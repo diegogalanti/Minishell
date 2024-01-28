@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 15:45:42 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/28 16:05:32 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef enum s_cmdtype
 	ENV,
 	EXIT,
 	EXEC,
+	NOT_FOUND,
 	NONE
 }	t_cmdtype;
 
