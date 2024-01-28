@@ -171,7 +171,7 @@ DIEGO: Probably because ECHO is equivalent to 0, and as there is no command the 
 
 ## FAILED TESTS
 
-#### Input redirection seems not to work properly:
+#### Input redirection seems not to work properly (FIXED):
 
 QUESTION: Why is "<" not read as redirection? 
 
