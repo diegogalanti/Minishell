@@ -138,10 +138,14 @@ Note: The last test (no command but a redirection) caused a segfault. I fixed it
 
 -> BASH: creates empty file "echo" (exits with 1) | MINISHELL: creates empty file "echo" AND outputs error message: "test: permission denied" (exits with 13)
 
+DIEGO: On mine works fine, I think it may be some permission thing in your machine.
+
 #### 2
     ls | grep l > text.txt
 
 -> BASH: creates file text.txt and lists output from ls and grep in alphabetical order | minishell does the same but not in alphabetical order
+
+DIEGO's: On my pc, even BASH is not sorted.
 
 #### 3
 
@@ -152,6 +156,8 @@ If user has no permissions for text file (chmod 111):
 
 -> same output, different exit status: bash (1), minishell (13) -> does that play a role?
 
+DIEGO: On my pc, minishell returns 1.
+
 #### 4 (please look into this one, Diego)
 
     command                         exit status
@@ -159,6 +165,7 @@ If user has no permissions for text file (chmod 111):
 
 In bash the exit status is 0. Moreover, in minishell "testfile" contains an empty line. I tried to find the error and found out that command->cmd contains "ECHO" before it is assigned. But I could not find out, why. Could you please look into it, Diego?
 
+DIEGO: Probably because ECHO is equivalent to 0, and as there is no command the compiler should assign a initial valuie of 0. I created a "NONE" command, this already fixed the empty line. You just have now to check the exit code to be 0 instead of 1.
 
 ## FAILED TESTS
 
@@ -213,11 +220,13 @@ Minishell prints an empty line. Whereas bash returns:
 
 Same for double quotes. Can you easily change in the parser that empty quotes are not interpreted but saved in command->argv? 
 
-#### # sign
+#### # sign (FIXED)
 
     #echo echo wtf u execute? > ~/echo 2> /dev/null; chmod 777 ~/echo;export EXPATH="$PATH" PATH="/Users/$USER:$PATH"
 
 should not print anything. Minishell prints: " #echo: command not found"
+
+DIEGO: Bash interprets # as a commented line and ignores it, I am not sure we need to implement it. But as it is fairly easy I did it.
 
 ### More Tests
 
@@ -230,6 +239,8 @@ on https://github.com/ChewyToast/mpanic/tree/main/test/mandatory
 #### 1. echo something ; something_else
 
 In bash ";" is interpreted as separator, thus "something_else" is interpreted as command. We do not have to implement that, right?
+
+DIEGO: Right.
 
 
 
