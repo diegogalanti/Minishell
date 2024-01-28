@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   argv_builder.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:53:29 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/21 17:28:30 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/28 16:16:18 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	build_argv(t_command *c)
 			{
 				c->argv[pos] = fs_substr(c->cmd_input, start_i, i - start_i, c);
 				remove_quotes(c->argv[pos]);
+				ft_printf("Argument = [%s]\n", c->argv[pos]);
 				start_i = i + 1;
 				pos++;
 				status = WFC;

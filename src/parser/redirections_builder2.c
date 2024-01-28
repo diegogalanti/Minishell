@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:44:32 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/15 14:49:26 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/28 16:21:23 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ t_parse_status	check_space_rb(t_parse_status current, int start_i,
 		return (WFC);
 	else if (current == WAITING_FOR_SPACE)
 	{
-		return (WAITING_FOR_RED);
 		*i += create_redirection(command, start_i, *i);
+		return (WAITING_FOR_RED);
 	}
 	return (current);
 }

@@ -6,7 +6,7 @@
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:44:32 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/15 14:50:35 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/28 16:21:09 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ static t_parse_status	check_bigger_rb(t_parse_status current, int *start_i,
 				"token `%c'\n", command->cmd_input[*i]), ABORT);
 	else if (current == WAITING_FOR_SPACE)
 	{
-		return (FOUND_ORED);
 		*i += create_redirection(command, *start_i, *i);
+		return (FOUND_ORED);
 	}
 	return (current);
 }
