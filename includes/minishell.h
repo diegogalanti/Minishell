@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/22 21:12:10 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/28 15:45:42 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ typedef enum s_cmdtype
 	UNSET,
 	ENV,
 	EXIT,
-	EXEC
+	EXEC,
+	NONE
 }	t_cmdtype;
 
 typedef enum s_parse_status
@@ -140,6 +141,7 @@ void			exit_child(t_data *data, int exit_status);
 
 /* parser.c */
 void			parse_input(t_data *data);
+int				check_commented(t_data *data);
 
 /* env_var.c */
 //char   **add_var(t_data *data, char **var, char *new_var);

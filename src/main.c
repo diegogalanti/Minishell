@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:44:14 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/22 12:27:27 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/28 15:52:20 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,11 @@ int	main(int argc, char **argv, char **env)
 		if (data->user_input)
 		{
 			add_history(data->user_input);
-			parse_input(data);
-			execute(data);
+			if (!check_commented(data))
+			{
+				parse_input(data);
+				execute(data);
+			}
 			free(data->user_input);
 			data->user_input = NULL;
 			close_all_fd(data);

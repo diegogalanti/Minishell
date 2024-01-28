@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_creator.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:52:07 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/22 14:30:40 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/28 15:35:18 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static void	add_type(t_command *command)
 {
     if (!command->argv[0])
-        return ;
+        command->cmd = NONE;
 	else if (!strncmp(command->argv[0], "echo", ft_strlen(command->argv[0])))
 		command->cmd = ECHO;
 	else if (!strncmp(command->argv[0], "cd ", ft_strlen(command->argv[0])))
@@ -34,7 +34,7 @@ static void	add_type(t_command *command)
 		command->cmd = EXEC;
 }
 
-/* Tatiana: I added data->nb_cmds to count the number of commands here. 
+/* Tatiana: I added data->nb_cmds to count the number of commands here.
 	Thought it was a good place because the commands are created here.*/
 
 void	create_command(t_data *data, int start, int end, int next_c)
