@@ -32,9 +32,11 @@ ls > abc > xzy
 results in command->argv[0] = ls, command->argv[1]= >, command->argv[2] = abc. 
 This is quite lucky, because with that I could now implement bashs behaviour (see redirections_multiple.c) by checking for multiple output redirections before executing the command.
 
-### Fix 4:
+### Fix 4 (FIXED):
 
 Right now the behavior for open single/double quotes is quite unpredictable. From the subject we dont have to manage it, but to avoid bigger problems maybe I can print a parser error and abort the process.
+
+In the end I just ignore and it prints nothing.
 
 ### Fix 5:
 Compilation with "make -n" (as required in evaluation sheet) gives the following error: 
