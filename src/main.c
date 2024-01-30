@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:44:14 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 15:52:20 by digallar         ###   ########.fr       */
+/*   Updated: 2024/01/29 18:30:04 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,14 @@ int	main(int argc, char **argv, char **env)
 			{
 				parse_input(data);
 				execute(data);
+                  //  reset_data(data);
 			}
 			free(data->user_input);
 			data->user_input = NULL;
 			close_all_fd(data);
 		}
+        else
+            sleep (3);
 	}
 	return (0);
 }

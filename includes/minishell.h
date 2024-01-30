@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 17:41:53 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/29 15:36:35 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ typedef struct s_data
 /* init.c */
 void			*init_data(char **env);
 int				init_env(t_data *data, char **env);
+void			reset_data(t_data *data);
 
 /* memory.c */
 void			*safe_malloc(t_data *data, size_t size);
@@ -157,7 +158,7 @@ void			get_child_exit_status(t_data *data, int child_exit_status);
 void			free_data(t_data *data);
 void			free_exit(t_data *data);
 void			free_command(t_command *command);
-void			exit_child(t_data *data, int exit_status);
+void			exit_child(t_data *data, t_command *command, int exit_status);
 
 /* parser.c */
 void			parse_input(t_data *data);

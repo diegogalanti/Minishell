@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 15:20:37 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 10:49:22 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	single_command(t_data *data, t_command *command)
 
 	if (!command->argv[0])
 		return (0);
-	if (command->cmd == EXEC)
+	if (command->cmd == EXEC || command->cmd == NOT_FOUND)
 	{
 		pid = fork();
 		if (pid < 0)
@@ -80,7 +80,7 @@ char	*find_path(t_data *data, char *cmd)
 		test_path = ff_strjoin(dir[i], "/", data);
 		test_cmd = ff_strjoin(test_path, cmd, data);
 		test_path = NULL;
-		if (!access(test_cmd, F_OK))
+		if (!access(test_cmd, X_OK))
 			break ;
 		test_cmd = NULL;
 	}
@@ -96,18 +96,18 @@ char	*find_path(t_data *data, char *cmd)
 
 void	execute_command(t_data *data, t_command *command)
 {
-	if (!command || !command->argv || !command->argv[0])
+	if (!command || !command->argv || !command->argv[0] || command->cmd == NOT_FOUND)
 	{
 		printf("%s: command not found\n", command->argv[0]);
-		exit_child (data, 127);
+		exit_child (data, command, 127);
 	}
-	if (access(command->argv[0], F_OK))
+	if (access(command->argv[0], X_OK))
 	{
 		command->argv[0] = find_path(data, command->argv[0]);
-		if (access(command->argv[0], F_OK))
+		if (access(command->argv[0], X_OK))
 		{
 			printf("minishell: %s: command not found\n", command->argv[0]);
-			exit_child (data, 127);
+			exit_child (data, command, 127);
 		}
 	}
 	redirect(command, data);
@@ -116,7 +116,7 @@ void	execute_command(t_data *data, t_command *command)
 	execve(command->argv[0], command->argv, data->env);
 	undirect(command, data);
 	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
-	exit_child (data, errno);
+	exit_child (data, command, errno);
 }
 
 /* execute: 1. checks if there are commands
@@ -129,10 +129,20 @@ void	execute(t_data *data)
 {
 	if (!data->nb_cmds)
 		return ;
-	if (!check_redirections(data, set_redirections))
-		return ;
+	//if (!check_redirections(data, set_redirections))
+	//	return ;
 	if (data->nb_cmds < 2 && data->commands)
+	{
+		if (!set_redirections(data->commands->content))
+		{
+			reset_data(data);
+			return ;
+		}
 		single_command(data, data->commands->content);
+	}
 	else
-		pipe_commands(data);
+    {
+        check_redirections(data, set_redirections);
+        pipe_commands(data);
+    }
 }

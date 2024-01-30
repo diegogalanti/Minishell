@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:52:33 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 16:53:33 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/29 13:39:03 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,14 @@ int	init_env(t_data *data, char **env)
 /* data struct is initialized
 	stdout_cpy is set to -1 
 	so that it will not attempt to be close if unititialized*/
+
+void    reset_data(t_data *data)
+{
+    data->commands = NULL;
+	data->nb_cmds = 0;
+	data->pid = NULL;
+	data->pipe = NULL;
+}
 
 void	*init_data(char **env)
 {

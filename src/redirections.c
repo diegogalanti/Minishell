@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:53:05 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 15:08:42 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/29 19:16:11 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,10 @@ int	check_redirections(t_data *data, int (*f)(t_command *))
 	{
 		if (!(*f)(data->commands->content))
 		{
+            close_redirections(data->commands->content);
 			data->exit_status = 1;
 			data->commands = head;
-			return (0);
+			//return (0);
 		}
 		data->commands = data->commands->next;
 	}
@@ -105,14 +106,14 @@ int	redirect(t_command *command, t_data *data)
 		if (data->stdin_cpy == -1)
 			data->stdin_cpy = dup(STDIN_FILENO);
 		dup2(command->fd_in, STDIN_FILENO);
-		close_fd(&command->fd_in);
+		close(command->fd_in);
 	}
 	if (command->fd_out != STDOUT_FILENO && command->fd_out >= 0)
 	{
 		if (data->stdout_cpy == -1)
 			data->stdout_cpy = dup(STDOUT_FILENO);
 		dup2(command->fd_out, STDOUT_FILENO);
-		close_fd(&command->fd_out);
+		close(command->fd_out);
 	}
 	return (1);
 }

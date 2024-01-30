@@ -6,17 +6,20 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:52:07 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/28 17:53:34 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 09:53:16 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* TATIANA: I included an "else" to the if in line 22. Otherwise it segfaulted if
+    !command->argv. */
+
 static void	add_type(t_command *command)
 {
 	if (!command->argv[0])
 		command->cmd = NONE;
-	if (ft_strlen(command->argv[0]) == 0)
+	else if (ft_strlen(command->argv[0]) == 0)
 		command->cmd = NOT_FOUND;
 	else if (!strncmp(command->argv[0], "echo", ft_strlen(command->argv[0])))
 		command->cmd = ECHO;

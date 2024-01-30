@@ -15,7 +15,7 @@ Right now, the parser does not set command->argv
 
 In parser: exit status is saved with quotes: "0" instead of 0.
 
-### Fix 3 (FIXED): Multiple output redirections
+### Fix 3: Multiple output redirections (Please look into this one, Diego)
 
 Right now I am coding in a way that we will only keep the last redirection, however for output redirection it will be missing some behavior. E.g.:
 
@@ -31,6 +31,8 @@ Tatianas Answer: Somehow the updated parser does not delete the additional redir
 ls > abc > xzy
 results in command->argv[0] = ls, command->argv[1]= >, command->argv[2] = abc. 
 This is quite lucky, because with that I could now implement bashs behaviour (see redirections_multiple.c) by checking for multiple output redirections before executing the command.
+
+UPDATE: After the last parser update, my solution does not work anymore. Could you reverse it, Diego, or is it too hard?
 
 ### Fix 4 (FIXED):
 
@@ -58,7 +60,7 @@ TATIANA's comment: Okay, thanks but for me there is no need to hardcode it.
 
 ### FAILED TESTS
 
-#### 1: Input redirection seems not to work properly:
+#### (FIXED) 1: Input redirection seems not to work properly:
 
 QUESTION: Why is "<" not read as redirection? 
 
@@ -72,12 +74,15 @@ QUESTION: Why is "<" not read as redirection?
 
 -> bash: outputs "tatiana"
 
-#### 2: Same for heredoc redirection (<<) when piped:
+#### (FIXED) 2: Same for heredoc redirection (<<) when piped:
+
 
     Minishell>$ cat << limiter | grep hello > test
     Redirection output = [test]
     /usr/bin/cat: '<<': No such file or directory
     /usr/bin/cat: limiter: No such file or directory
+
+ (FIXED:)
 
     Minishell>$ sleep 3 | << end cat > out1 | echo2 | << end2 cat > out2 | echo 3
     Command input = [sleep 3 ]
@@ -96,7 +101,7 @@ QUESTION: Why is "<" not read as redirection?
     echo2: command not found
     <<: command not found
 
-#### 3: Empty quotes (single and double)
+#### (FIXED) 3: Empty quotes (single and double)
 
     Minishell>$ ''
     Command input = ['']
@@ -109,13 +114,17 @@ Minishell prints an empty line. Whereas bash returns:
 
 Same for double quotes. Can you easily change in the parser that empty quotes are not interpreted but saved in command->argv? 
 
+DIEGO: It was working, not sure how i brake it. For me it was easier to set command->cmd to a new value "NOT_FOUND", it it ok?
+
+ TATIANA: Yes, I added the NOT_FOUND and it works :)
+
 #### (SOLVED) 4: Quotes when using export
 
     export PATH='/usr/bin'
 
 Minishell prints an error because of '/' which is not allowed in shell and environment variables. However, characters in quotes are ignored. I tried to implement it, but the quotes are omitted in the parser. Is there a way to leave the quotes in the command if it is export builtin?
 
-#### 5: error message and exit status
+#### (FIXED) 5: error message and exit status
 
     bash >$ echo hi < nofile | echo hii
     hii
@@ -137,21 +146,24 @@ Same for:
 
 ### Tests that have not the exact same output but that I (Tatiana) think OK:
 
-#### (SOLVED) 1
+####  (FIXED) 1
     test > echo
 
 -> BASH: creates empty file "echo" (exits with 1) | MINISHELL: creates empty file "echo" AND outputs error message: "test: permission denied" (exits with 13)
 
 DIEGO: On mine works fine, I think it may be some permission thing in your machine.
 
-#### 2
+TATIANA: If file "test" does not exist, minishells output and exit status is exactly the same as in bash (this is why it worked fine for you). The error lied in how I checked the commands to be executed. I only checked if they existed (access(command->argv[0], F_OK)) and not if they are also executable. So, minishell tried to execute the file "test" that I had created in the minishell file for testing purposes.
+
+#### (DONE) 2
     ls | grep l > text.txt
 
 -> BASH: creates file text.txt and lists output from ls and grep in alphabetical order | minishell does the same but not in alphabetical order
 
 DIEGO's: On my pc, even BASH is not sorted.
+TATIANA: Ah great! Then I mark it has "done".
 
-#### 3
+#### (FIXED) 3
 
 If user has no permissions for text file (chmod 111):
 
@@ -160,9 +172,10 @@ If user has no permissions for text file (chmod 111):
 
 -> same output, different exit status: bash (1), minishell (13) -> does that play a role?
 
-DIEGO: On my pc, minishell returns 1.
+DIEGO: On my pc, minishell returns 1. 
+TATIANA: Yes, I already changed it when testing the exit statuses (and forgot to update it). Because I found out that bash does always return 0, 1 or 127 but not errno, as I first implemented it.
 
-#### 4 (please look into this one, Diego)
+#### (FIXED) 4 (please look into this one, Diego)
 
     command                         exit status
     ls | >testfile                  1
@@ -170,15 +183,17 @@ DIEGO: On my pc, minishell returns 1.
 In bash the exit status is 0. Moreover, in minishell "testfile" contains an empty line. I tried to find the error and found out that command->cmd contains "ECHO" before it is assigned. But I could not find out, why. Could you please look into it, Diego?
 
 DIEGO: Probably because ECHO is equivalent to 0, and as there is no command the compiler should assign a initial valuie of 0. I created a "NONE" command, this already fixed the empty line. You just have now to check the exit code to be 0 instead of 1.
-#### 5
+
+TATIANA: Now it segfaults somewhere in the parser when ft_strlen is called. FIXED: Added an "else" to the if in function add_type. Now it works perfectly and returns 0.
+
+#### (FIXED) 5: Input redirection seems not to work properly:
 
     Minishell>$ xxxx | echo hola
     xxxx: command not found
     hola
     Minishell>$ echo $?
     0
-
-#### Input redirection seems not to work properly (FIXED):
+ 
     bash$ asdf | echo hola
     hola
     xxxx: command not found
@@ -207,7 +222,6 @@ Maybe it has to do with the following: "More precisely, a double dash (--) is us
 
 Then I would argue that minishell's behaviour is ok because we have not implemented the '--'.
 
-#### Empty quotes (single and double) (FIXED)
     bash>$ exit 9223372036854775808
     exit
     bash: exit: 9223372036854775808: numeric argument required
@@ -246,9 +260,6 @@ From this value on, bash prints the error message. minishell still works and exi
     boot   etc   lib32  lost+found	opt   run   srv       tmp
     cdrom  home  lib64  media	proc  sbin  swapfile  usr
 
-DIEGO: It was working, not sure how i brake it. For me it was easier to set command->cmd to a new value "NOT_FOUND", it it ok?
-
-#### # sign (FIXED)
 I do not understand the command "cd //" in bash. It seems to be exactly the same directory as "/" but when pwd is called it returns "//" instead of "/". In minishell "/" & "//" are executed by chdir. So, I could code some special case for "//" but I do not see the point of doing it. What do you think?
 Shortly googled "/" and "//" but did not find any entries... By the way, "cd ///" becomes "/"
 
@@ -281,16 +292,13 @@ I think it is over the top to implement a search if the directory exists or not.
 
 I implemented that the shell-level will increase each time minishell is called in minishell. If minishell is started for the first time, it inherits a higher shell level automatically. Thus, the shell name will also be changed from e.g. 'bin/bash' to 'minishell'. If the inherited shell level is 5000000, an error message is printed and the shell level is set to 1 (see function init_env). However, the following does not work in minishell:
 
-    $ export $SHLVL=5000000
+    $ export SHLVL=5000000
     $ env | grep SHLVL
     bash: warning: shell level (4999999) too high, resetting to 1
     bash: warning: shell level (4999999) too high, resetting to 1
     SHLVL=1
 
 I do not really understand when this happens. Not when you set it, not when just 'env' is called. Only when you grep SHLVL. So, I did not implement it so far. And in my opinion it is sufficient to leave it as it is. What do you think?
-
-
-DIEGO: Bash interprets # as a commented line and ignores it, I am not sure we need to implement it. But as it is fairly easy I did it.
 
 ### More Tests
 
@@ -451,10 +459,10 @@ all tests from https://github.com/ChewyToast/mpanic/blob/main/test/mandatory/exp
 
 ## Valgrind Errors
 
-#### 1
+#### 1: Memory leak when creating commands for pipes
 
-    Minishell>$ export | grep tat
-    declare -x tat
+    Minishell>$ export | grep TESTVAR
+    declare -x TESTVAR
     ==69190== 
     ==69190== HEAP SUMMARY:
     ==69190==     in use at exit: 209,273 bytes in 274 blocks
@@ -482,6 +490,34 @@ all tests from https://github.com/ChewyToast/mpanic/blob/main/test/mandatory/exp
     ==69190== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
 
 
+#### 2: Memory leak when command not found
 
+    Minishell>$ n
+    minishell: n: command not found
+    ==26730== 
+    ==26730== HEAP SUMMARY:
+    ==26730==     in use at exit: 214,475 bytes in 430 blocks
+    ==26730==   total heap usage: 661 allocs, 231 frees, 235,149 bytes allocated
+    ==26730== 
+    ==26730== 16 bytes in 1 blocks are definitely lost in loss record 22 of 93
+    ==26730==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+    ==26730==    by 0x11035E: ft_lstnew (in /home/vm/42/minishell/Minishell/minishell)
+    ==26730==    by 0x10C60C: create_command (command_creator.c:48)
+    ==26730==    by 0x10B9CE: check_final_cs (command_splitter.c:70)
+    ==26730==    by 0x10BB06: split_commands (command_splitter.c:101)
+    ==26730==    by 0x109F11: parse_input (parser.c:38)
+    ==26730==    by 0x109AFD: main (main.c:39)
+    ==26730== 
+    ==26730== LEAK SUMMARY:
+    ==26730==    definitely lost: 16 bytes in 1 blocks
+    ==26730==    indirectly lost: 0 bytes in 0 blocks
+    ==26730==      possibly lost: 0 bytes in 0 blocks
+    ==26730==    still reachable: 214,459 bytes in 429 blocks
+    ==26730==         suppressed: 0 bytes in 0 blocks
+    ==26730== Reachable blocks (those to which a pointer was found) are not shown.
+    ==26730== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+    ==26730== 
+    ==26730== For lists of detected and suppressed errors, rerun with: -s
+    ==26730== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
 
 
