@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:46:01 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 15:21:00 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:25:31 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int	builtin_echo(t_command *command)
 
 	i = 1;
 	n = 0;
-	while (command->argv[i] && !strncmp(command->argv[i], "-n", ft_strlen(command->argv[i])))
+	while (command->argv[i]
+		&& !strncmp(command->argv[i], "-n", ft_strlen(command->argv[i])))
 	{
 		n++;
 		i++;
@@ -38,7 +39,7 @@ int	builtin_echo(t_command *command)
 	}
 	if (n == 0)
 		printf("\n");
-    return (0);
+	return (0);
 }
 
 /* builtin_pwd: mimicks the behaviour of pwd in bash
@@ -60,6 +61,52 @@ void	builtin_pwd(void)
 	buf = NULL;
 }
 
+/* builtin_env: prints the environment variables
+	if env is followed by a valid new variable, 
+		the new var is printed, too (but not added to env)
+	if env is followed by a not valid new variable, it prints an error message*/
+
+void	builtin_env(t_data *data, t_command *command)
+{
+	int	i;
+
+	if (!data->env)
+	{
+		printf("minishell: no environment variable available\n");
+		return ;
+	}
+	i = 0;
+	while (command->argv[++i] != NULL)
+	{
+		if (!has_equal_sign(command->argv[i]))
+		{
+			printf("env: '%s': No such file or directory\n", command->argv[i]);
+			return ;
+		}
+	}
+	i = -1;
+	while (data->env[++i] != NULL)
+		printf("%s\n", data->env[i]);
+	i = 0;
+	while (command->argv[++i] != NULL)
+		printf("%s\n", command->argv[i]);
+}
+
+/* builtin_unset: deletes a or several environment variables
+	if no variable is given, it just returns*/
+
+void	builtin_unset(t_data *data, t_command *command)
+{
+	int	i;
+
+	i = 0;
+	while (command->argv[++i] != NULL)
+	{
+		data->env = del_var(data, data->env, command->argv[i]);
+		data->shvar = del_var(data, data->shvar, command->argv[i]);
+	}
+}
+
 /* builtins: This function checks if one of the builtins is requested.
 	If it is, a function which handles the specific builtin is called.
 	Otherwise, this functions returns, without doing anything.
@@ -67,12 +114,12 @@ void	builtin_pwd(void)
 
 int	check_builtins(t_data *data, t_command *command, int i)
 {
-    int status;
+	int	status;
 
 	redirect(command, data);
 	if (find_mult_redir(command->argv))
 		trunc_mult_redir(command->argv);
-    status = 0;
+	status = 0;
 	if (command->cmd == ECHO)
 		status = builtin_echo(command);
 	else if (command->cmd == CD)
@@ -87,5 +134,5 @@ int	check_builtins(t_data *data, t_command *command, int i)
 		builtin_env(data, command);
 	else if (command->cmd == EXIT)
 		builtin_exit(data, command, i);
-    return (status);
+	return (status);
 }

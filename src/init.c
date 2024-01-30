@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 16:52:33 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/29 13:39:03 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:55:45 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 
 int	init_env(t_data *data, char **env)
 {
-	int     shlvl;
-	char    *c;
+	int		shlvl;
+	char	*c;
 
 	data->env = env;
 	if (!ft_strvcmp(find_var(data->env, "SHELL="), "minishell"))
@@ -26,7 +26,8 @@ int	init_env(t_data *data, char **env)
 		shlvl = ft_atoi(find_var(data->env, "SHLVL="));
 		if (shlvl >= 5000000)
 		{
-			printf("minishell: warning: shell level (%i) too high, resetting to 1\n", shlvl);
+			printf("minishell: warning: shell level (%i) too high,", shlvl);
+			printf(" resetting to 1\n");
 			shlvl = 0;
 		}
 		c = fs_itoa((shlvl + 1), data);
@@ -55,14 +56,13 @@ int	init_env(t_data *data, char **env)
 	return (1);
 }*/
 
-
 /* data struct is initialized
 	stdout_cpy is set to -1 
 	so that it will not attempt to be close if unititialized*/
 
-void    reset_data(t_data *data)
+void	reset_data(t_data *data)
 {
-    data->commands = NULL;
+	data->commands = NULL;
 	data->nb_cmds = 0;
 	data->pid = NULL;
 	data->pipe = NULL;

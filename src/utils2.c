@@ -6,31 +6,11 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 12:03:17 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/26 10:27:54 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:07:34 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static char	*ff_strdup(t_command *command, char *s)
-{
-	char	*cpy;
-	size_t	len;
-	size_t	i;
-
-	len = ft_strlen(s);
-	cpy = (char *)command_safe_malloc(command, (sizeof(*cpy) * (len + 1)));
-	if (!cpy)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		cpy[i] = s[i];
-		i++;
-	}
-	cpy[i] = '\0';
-	return (cpy);
-}
 
 char	*fs_substr(char const *s, unsigned int start, size_t len, t_command *c)
 {
@@ -121,35 +101,6 @@ char	*fs_strjoin(char const *s1, char const *s2, t_command *command)
 	return (str);
 }
 
-/*char    *fs_strjoin_env_var(t_data *data, char *old_var, char *new_var)
-{
-	char	*cpy;
-	size_t	i;
-
-	i = 0;
-	while (new_var[i] != '=')
-		i++;
-	fs_strjoin(new_var + i + 1)
-	cpy = (char *)safe_malloc(data, (sizeof(*cpy) * (ft_strlen(old_var) + ft_strlen(new_var + i))));
-	if (!cpy)
-		return (NULL);
-	j = 0;
-	while (old_var[j] != '\0')
-	{
-		cpy[j] = old_var[i];
-		i++;
-	}
-	if (s[i] == '+')
-		i++;
-	while (s[i] != '\0')
-	{
-		cpy[i] = s[i];
-		i++;
-	}   
-	cpy[i] = '\0';
-	return (cpy);
-}*/
-
 int	has_equal_sign(char *str)
 {
 	int	i;
@@ -166,4 +117,3 @@ int	has_equal_sign(char *str)
 	}
 	return (0);
 }
-

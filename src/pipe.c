@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 15:54:59 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 10:25:36 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:58:33 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,14 @@ int	set_fd(t_data *data, t_command *command, int i)
 
 void	child_process(t_data *data, t_command *command, int i)
 {
-    command->exit_status = 1;
-    if ((command->fd_in == -1 && command->stdin) || 
-        (command->fd_out == -1 && command->stdout))
-    {
-        command->fd_out = -1;
-        exit_child(data, command, 1);
+	command->exit_status = 1;
+	if ((command->fd_in == -1 && command->stdin)
+		|| (command->fd_out == -1 && command->stdout))
+	{
+		command->fd_out = -1;
+		exit_child(data, command, 1);
 		return ;
-    }
+	}
 	set_fd(data, command, i);
 	if (command->cmd == EXEC || command->cmd == NOT_FOUND)
 		execute_command(data, command);
@@ -90,11 +90,11 @@ void	child_process(t_data *data, t_command *command, int i)
 }
 
 /* get_child_exit_status: 
-    stores the childs exit status in data->exit_status with which shell exits
+	stores the childs exit status in data->exit_status with which shell exits
 	The child's exit status is only stored if child exited normally 
-        (checked with macro WIFEXITED)
+		(checked with macro WIFEXITED)
 	If it exited normally, the child's status is retrieved 
-        with the macro WEXITSTATUS*/
+		with the macro WEXITSTATUS*/
 
 void	get_child_exit_status(t_data *data, int child_exit_status)
 {
@@ -127,8 +127,7 @@ int	pipe_commands(t_data *data)
 	i = -1;
 	while (++i < data->nb_cmds)
 	{
-		//waitpid(0, &child_exit_status, 0);
-        waitpid(data->pid[i], &child_exit_status, 0);
+		waitpid(data->pid[i], &child_exit_status, 0);
 		get_child_exit_status(data, child_exit_status);
 	}
 	return (1);

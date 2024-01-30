@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 10:08:19 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/28 17:13:12 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:32:36 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,15 @@ int	builtin_cd(t_data *data, t_command *command)
 		return (printf("minishell: cd: too many arguments\n"), 1);
 	else if (!strncmp(command->argv[1], "-", ft_strlen(command->argv[1])))
 		ret = chdir(ft_strtrim(find_var(data->env, "OLDPWD"), "="));
-	else if (!strncmp(command->argv[1], "--", ft_strlen(command->argv[1])) ||
-				!strncmp(command->argv[1], "~", ft_strlen(command->argv[1])))
+	else if (!strncmp(command->argv[1], "--", ft_strlen(command->argv[1]))
+		|| !strncmp(command->argv[1], "~", ft_strlen(command->argv[1])))
 		ret = chdir(ft_strtrim(find_var(data->env, "HOME"), "="));
 	else
 		ret = chdir(command->argv[1]);
 	if (ret != 0)
-		return (printf("minishell: cd: %s: %s\n", command->argv[1], strerror(errno)), 1);
+	{
+		printf("minishell: cd: %s: %s\n", command->argv[1], strerror(errno));
+		return (1);
+	}
 	return (0);
 }

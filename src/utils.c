@@ -6,11 +6,31 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 12:03:17 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/26 12:35:56 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:07:46 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static char	*ff_strdup(t_command *command, char *s)
+{
+	char	*cpy;
+	size_t	len;
+	size_t	i;
+
+	len = ft_strlen(s);
+	cpy = (char *)command_safe_malloc(command, (sizeof(*cpy) * (len + 1)));
+	if (!cpy)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		cpy[i] = s[i];
+		i++;
+	}
+	cpy[i] = '\0';
+	return (cpy);
+}
 
 char	*fs_strdup(t_data *data, char *s)
 {
@@ -31,7 +51,6 @@ char	*fs_strdup(t_data *data, char *s)
 	cpy[i] = '\0';
 	return (cpy);
 }
-
 
 char	*fs_strdup_env_var(t_data *data, char *s)
 {
@@ -70,8 +89,6 @@ int	ft_strvcmp(const char *s1, const char *s2)
 	i = 0;
 	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0' && s1[i] != '=')
 		i++;
-//	if (s1[i] == '=' && (s2[i] == '\0' || s2[i] == '=' || s2[i] == '+'))
-	//if ((s1[i] == '=' || s1[i] == '\0') && s2[i] == '\0')
 	if (s1[i] == s2[i])
 		return (0);
 	else if (s1[i] == '\0')
@@ -79,10 +96,10 @@ int	ft_strvcmp(const char *s1, const char *s2)
 		if (s2[i] == '=' || (s2[i] == '+' && s2[i + 1] == '='))
 			return (0);
 	}
-	else if (s1[i] == '=' && ((s2[i] == '+' && s2[i + 1] == '=') || s2[i] == '\0'))
+	else if (s1[i] == '='
+		&& ((s2[i] == '+' && s2[i + 1] == '=') || s2[i] == '\0'))
 		return (0);
 	else
 		return (1);
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
-

@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 15:05:54 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/27 17:02:28 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:39:37 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,14 +102,13 @@ char	**del_var(t_data *data, char **var, char *del_var)
 	ret = safe_malloc(data, (sizeof(char *) * (i + 1)));
 	if (!ret)
 		return (NULL);
-	i = 0;
-	while (var != NULL && var[i] != NULL)
+	i = -1;
+	while (var != NULL && var[++i] != NULL)
 	{
 		if (ft_strvcmp(var[i], del_var))
 			ret[i - j] = fs_strdup(data, var[i]);
 		else
 			j++;
-        i++;
 	}
 	ret[i - j] = NULL;
 	return (ret);

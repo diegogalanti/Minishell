@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:53:05 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/29 19:16:11 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:00:52 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,9 @@ int	check_redirections(t_data *data, int (*f)(t_command *))
 	{
 		if (!(*f)(data->commands->content))
 		{
-            close_redirections(data->commands->content);
+			close_redirections(data->commands->content);
 			data->exit_status = 1;
 			data->commands = head;
-			//return (0);
 		}
 		data->commands = data->commands->next;
 	}

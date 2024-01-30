@@ -6,38 +6,11 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 10:49:22 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:35:08 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/*int single_command(t_data *data, t_command *command)
-{
-	int pid;
-	int	child_exit_status;
-
-	if (!command->argv[0])
-		return (0);
-	data->stdout_cpy = dup(STDOUT_FILENO);
-	//close_fd(&data->stdout_cpy);
-	if ((pid = fork()) < 0)
-		return (printf("minishell: Error: fork process\n"), 0);
-	if (pid == 0)
-	{
-		if (command->cmd == EXEC)
-				execute_command(data, command);
-		else
-		{
-			redirect(command);
-			check_builtins(data, command, -2);
-			exit_child(data, 0);
-		}
-		waitpid(pid, &child_exit_status, 0);
-		get_child_exit_status(data, child_exit_status);
-	}
-	return (1);
-}*/
 
 int	single_command(t_data *data, t_command *command)
 {
@@ -96,7 +69,8 @@ char	*find_path(t_data *data, char *cmd)
 
 void	execute_command(t_data *data, t_command *command)
 {
-	if (!command || !command->argv || !command->argv[0] || command->cmd == NOT_FOUND)
+	if (!command || !command->argv || !command->argv[0]
+		|| command->cmd == NOT_FOUND)
 	{
 		printf("%s: command not found\n", command->argv[0]);
 		exit_child (data, command, 127);
@@ -129,8 +103,6 @@ void	execute(t_data *data)
 {
 	if (!data->nb_cmds)
 		return ;
-	//if (!check_redirections(data, set_redirections))
-	//	return ;
 	if (data->nb_cmds < 2 && data->commands)
 	{
 		if (!set_redirections(data->commands->content))
@@ -141,8 +113,8 @@ void	execute(t_data *data)
 		single_command(data, data->commands->content);
 	}
 	else
-    {
-        check_redirections(data, set_redirections);
-        pipe_commands(data);
-    }
+	{
+		check_redirections(data, set_redirections);
+		pipe_commands(data);
+	}
 }

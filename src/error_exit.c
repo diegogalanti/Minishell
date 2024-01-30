@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 14:44:27 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/29 14:59:01 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:49:13 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	free_exit(t_data *data)
 
 void	exit_child(t_data *data, t_command *command, int exit_status)
 {
-    undirect(command, data);
+	undirect(command, data);
 	close_all_fd(data);
 	clear_history();
 	exit (exit_status);
