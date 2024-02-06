@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 13:07:20 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/02/06 15:36:50 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <string.h>
 # include <errno.h>
 # include <sys/wait.h>
+# include <signal.h>
 # include "libft.h"
 # include "ft_printf.h"
 
@@ -178,7 +179,7 @@ int				find_mult_redir(char **argv);
 void			trunc_mult_redir(char **argv);
 
 /* utils.c */
-static char		*ff_strdup(t_command *command, char *s);
+char			*ff_strdup(t_command *command, char *s);
 char			*fs_strdup(t_data *data, char *s);
 char			*fs_strdup_env_var(t_data *data, char *s);
 int				ft_strvcmp(const char *s1, const char *s2);
@@ -249,5 +250,9 @@ t_parse_status	check_nonspace_ab(t_parse_status current, int *start_i,
 
 /* quotes_remover.c */
 void			remove_quotes(char *arg);
+
+/* signals.c */
+int				set_signal(void);
+void			handle_signals(int sig);
 
 #endif /* MINISHELL_H */

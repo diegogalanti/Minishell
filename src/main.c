@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:44:14 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 12:57:12 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/02/06 15:45:58 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@
 
 int	main(int argc, char **argv, char **env)
 {
-	t_data	*data;
+	t_data				*data;
 
+	set_signal();
 	if (argc > 1)
 		printf("implement non-interactive mode for %s\n", *argv);
 	data = init_data(env);
@@ -42,6 +43,11 @@ int	main(int argc, char **argv, char **env)
 			free(data->user_input);
 			data->user_input = NULL;
 			close_all_fd(data);
+		}
+		else
+		{
+			printf("exit\n");
+			free_exit(data);
 		}
 	}
 	return (0);

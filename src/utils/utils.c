@@ -6,13 +6,13 @@
 /*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 12:03:17 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 13:07:46 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/02/02 13:47:33 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*ff_strdup(t_command *command, char *s)
+char	*ff_strdup(t_command *command, char *s)
 {
 	char	*cpy;
 	size_t	len;

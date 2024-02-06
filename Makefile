@@ -6,7 +6,7 @@
 #    By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/15 12:47:35 by tstahlhu          #+#    #+#              #
-#    Updated: 2024/01/28 16:27:35 by tstahlhu         ###   ########.fr        #
+#    Updated: 2024/02/06 15:33:39 by tstahlhu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,14 +20,17 @@ INCLS		= $(addprefix ${DIRINCL}, $(addsuffix .h, ${INCL}))
 
 DIRLIBFT	= ./libft/
 
-SRC			= builtins error_exit init main memory parser/parser commands_executor \
-				utils fs_split env_var redirections pipe parser/command_splitter \
-				parser/command_splitter2 parser/vars_expander parser/vars_expander2 \
-				parser/command_creator parser/redirections_builder parser/quotes_remover \
-				parser/argv_builder2 parser/argv_allocator utils2 parser/vars_expander3 \
+SRC			= 	main init error_exit memory signals \
+				parser/parser parser/command_splitter parser/command_splitter2 \
+				parser/vars_expander parser/vars_expander2 parser/vars_expander3 \
+				parser/command_creator parser/redirections_builder \
+				parser/quotes_remover parser/argv_builder2 parser/argv_allocator  \
 				parser/argv_builder parser/redirections_builder2 parser/redirections_builder3 \
-				redirections_multiple heredoc builtin_exit builtin_export builtin_cd \
-				fs_itoa
+				executor/commands_executor executor/pipe \
+				executor/redirections executor/redirections_multiple executor/heredoc \
+				builtins/builtin_cd builtins/builtin_exit builtins/builtin_export \
+				builtins/builtins builtins/env_var  \
+				utils/utils utils/utils2 utils/fs_split utils/fs_itoa
 
 SRCS		= $(addprefix ${DIRSCR}, $(addsuffix .c, ${SRC}))
 
