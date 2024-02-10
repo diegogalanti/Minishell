@@ -34,6 +34,8 @@ This is quite lucky, because with that I could now implement bashs behaviour (se
 
 UPDATE: After the last parser update, my solution does not work anymore. Could you reverse it, Diego, or is it too hard?
 
+DIEGOS: So, I did not exactly got why the bug was helping the redirections. But the problem is that it was causing other problems, like the Failed tests. I think we dont need to have the argv[1] = > and argv[2] = abc in the command->argv array, as the array is just for arguments, the > will show in command->append_mode that will be 0 or 1 and the value "abc" will be in the at command->stdin or command->stdout, so you have the same information but on correct places, you should be able to do multiple redirections. 
+
 ### Fix 4 (FIXED):
 
 Right now the behavior for open single/double quotes is quite unpredictable. From the subject we dont have to manage it, but to avoid bigger problems maybe I can print a parser error and abort the process.
@@ -202,6 +204,8 @@ TATIANA: Now it segfaults somewhere in the parser when ft_strlen is called. FIXE
 
 prints in different order. I would argue that it is ok, because it depends on which child process is faster or prioritized. I think to remember from pipex that bash also prints these messages in different order but when I tested this time, it was always the same order. So, I included it into this list, so you know and can form an opinion about it yourself...
 
+Diego: I think it is fine, I agree that the order will depend on child process priority.
+
 #### 6: exit builtin
 
         bash>$ exit --
@@ -222,11 +226,15 @@ Maybe it has to do with the following: "More precisely, a double dash (--) is us
 
 Then I would argue that minishell's behaviour is ok because we have not implemented the '--'.
 
+DIEGO: I think you are totally right about the problem being -- being interpreted as something else in bash, like special operator, and we dont have to implement that.
+
     bash>$ exit 9223372036854775808
     exit
     bash: exit: 9223372036854775808: numeric argument required
 
 From this value on, bash prints the error message. minishell still works and exits normally with exit status codes from 0 - 255. It seems that every thing that exceeds the size of a long, returns error. Should we set this boundary, too? I do not see why...
+
+DIEGO: I don't think we have to worry about that. On documentation they say codes should be between 0 and 255 for exit, so anything over 255 should not be really judged IMH. 
 
 #### 7: cd //
 
@@ -263,6 +271,8 @@ From this value on, bash prints the error message. minishell still works and exi
 I do not understand the command "cd //" in bash. It seems to be exactly the same directory as "/" but when pwd is called it returns "//" instead of "/". In minishell "/" & "//" are executed by chdir. So, I could code some special case for "//" but I do not see the point of doing it. What do you think?
 Shortly googled "/" and "//" but did not find any entries... By the way, "cd ///" becomes "/"
 
+From that thread below, I think it is really just some strange POSIX stuff with bash, that really does not matter too much: https://stackoverflow.com/questions/20690828/what-does-double-slash-in-cd-mean-in-linux
+
 #### 8: error message
 
     Minishell>$ /Users/nonexist/directory
@@ -287,6 +297,8 @@ Bash and Minishell print a different error message. Minishell treats this argume
     126
 
 I think it is over the top to implement a search if the directory exists or not. It seems to be a lot of work for a different error message. What do you think?
+
+DIEGO: That is an interesting case, but I agree it is over the top trying to implement it.
 
 #### 9: shell levels
 
@@ -326,13 +338,18 @@ But it is in the mandatory tests part in https://github.com/ChewyToast/mpanic/bl
 
 The above command fails.
 
+Diego: Is this in that evaluator sheet? I really think it is not mandatory as it is not in the subject. What I knos is that the subject changed a lot for minishell during time, on internet I found 2 other versions with different requirtements. Maybe ; was mandatory in some older subject.
+
 #### 2. export
 
 I did not implement that export sorts values alphabetically. It does not seem to be required in the subject or the evaluation sheet. I would argue to an evaluator that it is not needed, we all are able to do it and it is just unnecessary work. What do you think?
 
+Diego: Agree!
+
 #### 3. not closed quotes
 
-If the user does not close the quotes, the prompt is just given back. Maybe it would be useful to print an error message, saying that the quotes are not closed?   
+If the user does not close the quotes, the prompt is just given back. Maybe it would be useful to print an error message, saying that the quotes are not closed? 
+Diego: Sure, I can do that =)
 
 
 ### Passed Tests (which means minishell behaves as bash regarding output and exit status):
@@ -458,6 +475,8 @@ all tests from https://github.com/ChewyToast/mpanic/blob/main/test/mandatory/exp
 @Diego: Feel free to add more test, especially error input :)
 
 ## Valgrind Errors
+
+Diego: We still have to adjust the exit function to fix all memmory leaks.
 
 #### 1: Memory leak when creating commands for pipes
 
