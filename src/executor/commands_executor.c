@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_executor.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 12:35:08 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/02/11 19:08:21 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

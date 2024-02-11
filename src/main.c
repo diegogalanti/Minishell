@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:44:14 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/02/06 15:45:58 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/02/11 19:40:57 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_signal[2] = {-1, -1};
 
 /* Maybe implement (This is not required by the subject)
 	environment variables: if "some_var=some_value" add it to data->shvar
@@ -31,14 +33,21 @@ int	main(int argc, char **argv, char **env)
 	data = init_data(env);
 	while (1)
 	{
+		g_signal[0] = -1;
+		g_signal[1] = -1;
 		data->user_input = readline(PROMPT);
+		if (g_signal[1] == 1)
+			data->exit_status = 1;
 		if (data->user_input)
 		{
 			add_history(data->user_input);
 			if (!check_commented(data))
 			{
 				parse_input(data);
+				g_signal[0] = 1;
 				execute(data);
+				if (g_signal[1] != -1 && g_signal[1] != 1)
+					data->exit_status = g_signal[1];
 			}
 			free(data->user_input);
 			data->user_input = NULL;

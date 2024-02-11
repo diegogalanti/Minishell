@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 15:54:59 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 12:58:33 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/02/11 15:00:08 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ int	creat_pipe(t_data *data)
 /* set_fd: assigns the right file descriptors for command
 	according to redirections and pipes
 	If it is the 1. command (i = 0) and there is no redirection
-		(command->fd_in < 0) fd_in is set to stdin 
+		(command->fd_in < 0) fd_in is set to stdin
 	The same applies for the last command (i = nb_cmds - 1) and
 		which is set to stdout if not an fd is set for redirection
 	Else fd_in and fd_out are set to the right pipe end to write or
-		read from it. 
+		read from it.
 	Last, all other pipe ends are closed, so that the process
-		is not waiting for them but exits when finished. 
+		is not waiting for them but exits when finished.
 */
 
 int	set_fd(t_data *data, t_command *command, int i)
@@ -89,11 +89,11 @@ void	child_process(t_data *data, t_command *command, int i)
 	exit_child (data, command, command->exit_status);
 }
 
-/* get_child_exit_status: 
+/* get_child_exit_status:
 	stores the childs exit status in data->exit_status with which shell exits
-	The child's exit status is only stored if child exited normally 
+	The child's exit status is only stored if child exited normally
 		(checked with macro WIFEXITED)
-	If it exited normally, the child's status is retrieved 
+	If it exited normally, the child's status is retrieved
 		with the macro WEXITSTATUS*/
 
 void	get_child_exit_status(t_data *data, int child_exit_status)
