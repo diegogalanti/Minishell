@@ -34,7 +34,10 @@ This is quite lucky, because with that I could now implement bashs behaviour (se
 
 UPDATE: After the last parser update, my solution does not work anymore. Could you reverse it, Diego, or is it too hard?
 
-DIEGOS: So, I did not exactly got why the bug was helping the redirections. But the problem is that it was causing other problems, like the Failed tests. I think we dont need to have the argv[1] = > and argv[2] = abc in the command->argv array, as the array is just for arguments, the > will show in command->append_mode that will be 0 or 1 and the value "abc" will be in the at command->stdin or command->stdout, so you have the same information but on correct places, you should be able to do multiple redirections. 
+DIEGOS: So, I did not exactly got why the bug was helping the redirections. But the problem is that it was causing other problems, like the Failed tests. I think we dont need to have the argv[1] = > and argv[2] = abc in the command->argv array, as the array is just for arguments, the > will show in command->append_mode that will be 0 or 1 and the value "abc" will be in the at command->stdin or command->stdout, so you have the same information but on correct places, you should be able to do multiple redirections. "
+
+TATIANA: Now, if you type "ls > abc > xyz" xyz is stored in command->stdout but "abc" is lost. The redirection works properly byt "abc" is not created. The bug helped because "abc" was stored in argv which I handled with an extra function that checked for the bug (see multiple_redirections.c). Before executing I check if argv holds a ">" or "<" and if so, the specified file is opened or created and then just closed and argv is cleaned so that only the command and its arguments are in it. So this part should not have been responsible for the failed tests anymore. 
+ 
 
 ### Fix 4 (FIXED):
 
@@ -339,6 +342,7 @@ But it is in the mandatory tests part in https://github.com/ChewyToast/mpanic/bl
 The above command fails.
 
 Diego: Is this in that evaluator sheet? I really think it is not mandatory as it is not in the subject. What I knos is that the subject changed a lot for minishell during time, on internet I found 2 other versions with different requirtements. Maybe ; was mandatory in some older subject.
+Tatiana: Ah, that could well be. I do not know on which evalsheet the test are based. So, we leave it as it is.
 
 #### 2. export
 
@@ -477,6 +481,7 @@ all tests from https://github.com/ChewyToast/mpanic/blob/main/test/mandatory/exp
 ## Valgrind Errors
 
 Diego: We still have to adjust the exit function to fix all memmory leaks.
+Tatiana: Ok :)
 
 #### 1: Memory leak when creating commands for pipes
 
