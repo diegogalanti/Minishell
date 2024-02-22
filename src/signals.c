@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 13:11:12 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/02/11 19:36:39 by digallar         ###   ########.fr       */
+/*   Updated: 2024/02/21 12:18:28 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 extern int	g_signal[2];
 
 /* set_signal: This function handles the signals SIGINT (Ctrl-C)
-				and SIGQUIT (Ctrl-\).
-	SIQUIT is ignored (therefore I just chose the signal function)
-	SIGINT should result in displaying a new prompt line. To handle SIGINT
-	the function handle_signals() is called with the help of sigaction.
+				and SIGQUIT (Ctrl-\) with sigaction which calls
+				the function handle signals.
+	SIQUIT is ignored 
+	SIGINT should result in displaying a new prompt line. 
 	QUESTION: Is error handling needed?*/
 
 int	set_signal(void)
@@ -32,11 +32,12 @@ int	set_signal(void)
 	return (0);
 }
 
-/* handle_signals: handles SIGINT (more signals could be added)
-	a new prompt line is displayed:
+/* handle_signals: handles SIGINT and SIGQUIT (more signals could be added)
+	SIGINT: a new prompt line is displayed:
 	-rl_replace_line empties readline line buffer
 		so that the previous user input is not printed
 	- a new line is printed
+@ Diego: could you explain the g_signal?
 	- the prompt is printed again
 	QUESTIONS: How about redirections?
 		Should child processes be killed or are they automatically?
