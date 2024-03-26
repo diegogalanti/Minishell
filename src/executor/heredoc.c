@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 17:47:46 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/21 17:53:25 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:29:59 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ int	here_doc(t_command *cmd)
 
 	heredoc = open(".here_doc", O_WRONLY | O_CREAT | O_TRUNC, 00664);
 	if (heredoc < 0)
-		return (printf("minishell: .here_doc \n"), 0);
+		return (ft_putstr_fd("minishell: .here_doc \n", STDERR_FILENO), 0);
 	while (1)
 	{
 		buf = readline("< ");
-		if (strncmp(buf, cmd->limiter, ft_strlen(cmd->limiter)) == 0)
+		if (strncmp(buf, cmd->limiter, ft_strlen(buf)) == 0)
 			break ;
 		write(heredoc, buf, ft_strlen(buf));
 		write(heredoc, "\n", 1);

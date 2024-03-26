@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:44:14 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/02/11 19:40:57 by digallar         ###   ########.fr       */
+/*   Updated: 2024/03/26 14:53:55 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,11 @@ int	main(int argc, char **argv, char **env)
 
 	set_signal();
 	if (argc > 1)
-		printf("implement non-interactive mode for %s\n", *argv);
+		return (printf("implement non-interactive mode for %s\n", *argv), 0);
 	data = init_data(env);
 	while (1)
 	{
-		g_signal[0] = -1;
-		g_signal[1] = -1;
+		reset_g_signal();
 		data->user_input = readline(PROMPT);
 		if (g_signal[1] == 1)
 			data->exit_status = 1;

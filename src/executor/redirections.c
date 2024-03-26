@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:53:05 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 13:00:52 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:18:37 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ int	set_redirections(t_command *c)
 	{
 		c->fd_in = open(c->stdin, O_RDONLY);
 		if (c->fd_in == -1)
-			return (printf("minishell: %s: %s\n",
-					c->stdin, strerror(errno)), 0);
+			return (print_error("",	c->stdin, strerror(errno)), 0);
 	}
 	else if (c->limiter)
 		here_doc(c);
@@ -42,8 +41,7 @@ int	set_redirections(t_command *c)
 		else if (c->append_mode == 1)
 			c->fd_out = open(c->stdout, O_CREAT | O_WRONLY | O_APPEND, 00664);
 		if (c->fd_out == -1)
-			return (printf("minishell: %s: %s\n", c->stdout, strerror(errno)),
-				0);
+			return (print_error("", c->stdout, strerror(errno)), 0);
 	}
 	else
 		c->fd_out = -1;

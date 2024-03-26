@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_executor.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 15:58:29 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/02/11 19:08:21 by digallar         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:05:57 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	single_command(t_data *data, t_command *command)
 	{
 		pid = fork();
 		if (pid < 0)
-			return (printf("minishell: Error: fork process\n"), 0);
+			return (ft_putstr_fd("minishell: Error: fork process\n", STDERR_FILENO), 1);
 		if (pid == 0)
 			execute_command(data, command);
 		waitpid(pid, &child_exit_status, 0);
@@ -80,16 +80,16 @@ void	execute_command(t_data *data, t_command *command)
 		command->argv[0] = find_path(data, command->argv[0]);
 		if (access(command->argv[0], X_OK))
 		{
-			printf("minishell: %s: command not found\n", command->argv[0]);
+			print_error("", command->argv[0], "command not found");
 			exit_child (data, command, 127);
 		}
 	}
 	redirect(command, data);
-	if (find_mult_redir(command->argv))
-		trunc_mult_redir(command->argv);
+//	if (find_mult_redir(command->argv))
+//		trunc_mult_redir(command->argv);
 	execve(command->argv[0], command->argv, data->env);
 	undirect(command, data);
-	printf("minishell: %s: %s\n", command->argv[0], strerror(errno));
+	print_error("", command->argv[0], strerror(errno));
 	exit_child (data, command, errno);
 }
 
@@ -108,6 +108,7 @@ void	execute(t_data *data)
 		if (!set_redirections(data->commands->content))
 		{
 			reset_data(data);
+			data->exit_status = 1;
 			return ;
 		}
 		single_command(data, data->commands->content);

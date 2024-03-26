@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:46:01 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 12:25:31 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:23:27 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,23 +66,17 @@ void	builtin_pwd(void)
 		the new var is printed, too (but not added to env)
 	if env is followed by a not valid new variable, it prints an error message*/
 
-void	builtin_env(t_data *data, t_command *command)
+int	builtin_env(t_data *data, t_command *command)
 {
 	int	i;
 
 	if (!data->env)
-	{
-		printf("minishell: no environment variable available\n");
-		return ;
-	}
+		return (print_error("env", "", "no environment variable available"), 1);
 	i = 0;
 	while (command->argv[++i] != NULL)
 	{
 		if (!has_equal_sign(command->argv[i]))
-		{
-			printf("env: '%s': No such file or directory\n", command->argv[i]);
-			return ;
-		}
+			return (print_error("env", command->argv[i], "No such file or directory"), 1);
 	}
 	i = -1;
 	while (data->env[++i] != NULL)
@@ -90,6 +84,7 @@ void	builtin_env(t_data *data, t_command *command)
 	i = 0;
 	while (command->argv[++i] != NULL)
 		printf("%s\n", command->argv[i]);
+	return (0);
 }
 
 /* builtin_unset: deletes a or several environment variables
@@ -117,8 +112,8 @@ int	check_builtins(t_data *data, t_command *command, int i)
 	int	status;
 
 	redirect(command, data);
-	if (find_mult_redir(command->argv))
-		trunc_mult_redir(command->argv);
+	//if (find_mult_redir(command->argv))
+	//	trunc_mult_redir(command->argv);
 	status = 0;
 	if (command->cmd == ECHO)
 		status = builtin_echo(command);
@@ -127,12 +122,12 @@ int	check_builtins(t_data *data, t_command *command, int i)
 	else if (command->cmd == PWD)
 		builtin_pwd();
 	else if (command->cmd == EXPORT)
-		builtin_export(data, command);
+		status = builtin_export(data, command);
 	else if (command->cmd == UNSET)
 		builtin_unset(data, command);
 	else if (command->cmd == ENV)
-		builtin_env(data, command);
+		status = builtin_env(data, command);
 	else if (command->cmd == EXIT)
-		builtin_exit(data, command, i);
+		status = builtin_exit(data, command, i);
 	return (status);
 }

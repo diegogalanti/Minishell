@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections_builder3.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:44:32 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/23 10:19:25 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 12:28:58 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ static int	create_limiter(t_command *cmd, int start, int end)
 				ft_strlen(cmd->cmd_input) - end, cmd), cmd);
 	cmd->found_limiter = 0;
 	remove_quotes(cmd->limiter);
-	//ft_printf("Limiter = [%s]\n", cmd->limiter);
 	return (ft_strlen(cmd->cmd_input) - old_size);
 }
 
@@ -69,13 +68,11 @@ int	create_redirection(t_command *cmd, int start, int end)
 	{
 		cmd->stdin = fs_substr(cmd->cmd_input, i, end - i, cmd);
 		remove_quotes(cmd->stdin);
-		//ft_printf("Redirection input = [%s]\n", cmd->stdin);
 	}
 	else if (type == 1)
 	{
 		cmd->stdout = fs_substr(cmd->cmd_input, i, end - i, cmd);
 		remove_quotes(cmd->stdout);
-		//ft_printf("Redirection output = [%s]\n", cmd->stdout);
 	}
 	cmd->cmd_input = fs_strjoin(fs_substr(cmd->cmd_input, 0, start, cmd),
 			fs_substr(cmd->cmd_input, end,

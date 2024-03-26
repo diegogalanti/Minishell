@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   command_creator.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:52:07 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/30 09:53:16 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 12:29:31 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/* TATIANA: I included an "else" to the if in line 22. Otherwise it segfaulted if
-    !command->argv. */
 
 static void	add_type(t_command *command)
 {
@@ -39,9 +36,6 @@ static void	add_type(t_command *command)
 		command->cmd = EXEC;
 }
 
-/* Tatiana: I added data->nb_cmds to count the number of commands here.
-	Thought it was a good place because the commands are created here.*/
-
 void	create_command(t_data *data, int start, int end, int next_c)
 {
 	t_command	*command ;
@@ -61,7 +55,6 @@ void	create_command(t_data *data, int start, int end, int next_c)
 	command->exit_status = data->exit_status;
 	command->found_limiter = 0;
 	command->append_mode = -1;
-	//ft_printf("Command input = [%s]\n", command->cmd_input);
 	expand_vars(command);
 	data->exit_status = build_redirections(command, next_c);
 	if (data->exit_status != 0)

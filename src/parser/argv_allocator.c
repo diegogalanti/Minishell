@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   argv_allocator.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 08:53:29 by digallar          #+#    #+#             */
-/*   Updated: 2024/01/23 10:18:19 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 12:27:47 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ void	alloc_argv(t_command *command)
 	}
 	if (status == WAITING_FOR_SPACE)
 		size++;
-	//ft_printf("Command has %i arguments.\n", size);
 	command->argv = command_safe_malloc(command,
 			sizeof(command->argv) * (size + 1));
 	command->argv[size] = 0;

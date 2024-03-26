@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 17:38:52 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 12:46:03 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 15:58:57 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	check_var_name(char *str)
 	}
 	while (str[i] != '\0')
 	{
-		if (32 <= str[i] && str[i] < 127)
+		if (32 <= str[i] && str[i] < 127 && str[0] != '=' && str[0] != '+')
 			i++;
 		else
 			return (0);
@@ -95,7 +95,7 @@ void	print_export(char **env)
 	}
 }
 
-void	builtin_export(t_data *data, t_command *command)
+int	builtin_export(t_data *data, t_command *command)
 {
 	int	i;
 
@@ -104,7 +104,7 @@ void	builtin_export(t_data *data, t_command *command)
 	{
 		print_export(data->env);
 		print_export(data->shvar);
-		return ;
+		return (0);
 	}
 	while (command->argv[++i] != NULL)
 	{
@@ -112,9 +112,11 @@ void	builtin_export(t_data *data, t_command *command)
 			add_mod_var(data, command->argv[i]);
 		else
 		{
-			printf("minishell: export: '%s': not a valid identifier\n",
-				command->argv[i]);
-			data->exit_status = 1;
+			ft_putstr_fd("minishell: export: '", 2);
+			ft_putstr_fd(command->argv[i], 2);
+			ft_putstr_fd("': not a valid identifier\n", 2);
+			return (1);
 		}
 	}
+	return (0);
 }

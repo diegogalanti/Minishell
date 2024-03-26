@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_exit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 14:44:27 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/30 12:49:13 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:52:44 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,22 @@ void	exit_child(t_data *data, t_command *command, int exit_status)
 	close_all_fd(data);
 	clear_history();
 	exit (exit_status);
+}
+
+void	print_error(char *where, char *what, char *why)
+{
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	if (*where != '\0')
+	{
+		ft_putstr_fd(where, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+	}
+	if (*what != '\0')
+	{
+		ft_putstr_fd("'", STDERR_FILENO);
+		ft_putstr_fd(what, STDERR_FILENO);
+		ft_putstr_fd("': ", STDERR_FILENO);
+	}
+	ft_putstr_fd(why, STDERR_FILENO);
+	ft_putchar_fd('\n', STDERR_FILENO);
 }

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+         #
+#    By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/15 12:47:35 by tstahlhu          #+#    #+#              #
-#    Updated: 2024/03/26 08:33:17 by digallar         ###   ########.fr        #
+#    Updated: 2024/03/26 12:24:38 by tstahlhu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 

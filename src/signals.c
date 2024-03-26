@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tstahlhu <tstahlhu@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 13:11:12 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/02/21 12:18:28 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/03/26 14:53:59 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,10 @@ void	handle_signals(int sig)
 		rl_redisplay();
 		write(1, "  \b\b", 4);
 	}
+}
+
+void	reset_g_signal(void)
+{
+	g_signal[0] = -1;
+	g_signal[1] = -1;
 }

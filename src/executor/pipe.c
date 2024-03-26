@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 15:54:59 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/02/11 15:00:08 by digallar         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:30:56 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,13 +112,13 @@ int	pipe_commands(t_data *data)
 
 	command = data->commands;
 	if (!creat_pipe(data))
-		return (printf("Minishell: Error: Could not create pipes\n"), 0);
+		return (ft_putstr_fd("Minishell: Error: Could not create pipes\n", STDERR_FILENO), 0);
 	i = -1;
 	while (++i < data->nb_cmds)
 	{
 		data->pid[i] = fork();
 		if (data->pid[i] < 0)
-			return (printf("Minishell: Error: Fork failed\n"), 0);
+			return (ft_putstr_fd("Minishell: Error: Fork failed\n", STDERR_FILENO), 0);
 		if (data->pid[i] == 0)
 			child_process(data, command->content, i);
 		command = command->next;

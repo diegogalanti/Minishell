@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/02/11 15:00:03 by digallar         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:24:37 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,10 @@ typedef struct s_data
 {
 	t_list	*free_list;
 	t_list	*commands;
-	int		nb_cmds; /*this is good to know when piping and forking*/
+	int		nb_cmds;
 	char	*user_input;
-	char	**env; /*these are the environment variables (will be inherited)*/
-	char	**shvar;/*shell variables (only present in this shell)*/
+	char	**env;
+	char	**shvar;
 	int		**pipe;
 	int		*pid;
 	int		stdin_cpy;
@@ -126,7 +126,7 @@ void			execute(t_data *data);
 int				builtin_echo(t_command *command);
 void			builtin_pwd(void);
 void			builtin_unset(t_data *data, t_command *command);
-void			builtin_env(t_data *data, t_command *command);
+int			builtin_env(t_data *data, t_command *command);
 int				check_builtins(t_data *data, t_command *command, int i);
 
 /* builtin_cd.c */
@@ -135,13 +135,13 @@ int				builtin_cd(t_data *data, t_command *command);
 /* builtin_exit.c */
 int				check_exit_n_input(char *str);
 int				get_exit_status(t_data *data, char *input);
-void			builtin_exit(t_data *data, t_command *command, int i);
+int				builtin_exit(t_data *data, t_command *command, int i);
 
 /* builtin_export.c */
 int				check_var_name(char *str);
 void			add_mod_var(t_data *data, char *var);
 void			print_export(char **env);
-void			builtin_export(t_data *data, t_command *command);
+int				builtin_export(t_data *data, t_command *command);
 
 /* env_var.c: helper functions for builtins env, export, unset*/
 char			**add_var(t_data *data, char **var, char *new_var);
@@ -161,6 +161,7 @@ void			free_data(t_data *data);
 void			free_exit(t_data *data);
 void			free_command(t_command *command);
 void			exit_child(t_data *data, t_command *command, int exit_status);
+void			print_error(char *where, char *what, char *why);
 
 /* parser.c */
 void			parse_input(t_data *data);
@@ -254,5 +255,6 @@ void			remove_quotes(char *arg);
 /* signals.c */
 int				set_signal(void);
 void			handle_signals(int sig);
+void			reset_g_signal(void);
 
 #endif /* MINISHELL_H */
