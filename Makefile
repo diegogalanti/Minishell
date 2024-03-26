@@ -6,7 +6,7 @@
 #    By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/15 12:47:35 by tstahlhu          #+#    #+#              #
-#    Updated: 2024/02/11 19:42:05 by digallar         ###   ########.fr        #
+#    Updated: 2024/03/26 08:33:17 by digallar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,13 +49,13 @@ CFLAGS		= -Wall -Wextra -Werror
 all:		$(NAME)
 
 $(NAME): 	$(OBJS) ${INCLS} ${NAMELIBFT}
-				cc ${CFLAGS} ${OBJS} -I${DIRINCL} -l readline ${NAMELIBFT} -o ${NAME}
+				cc ${CFLAGS} ${OBJS} -I${DIRINCL} -l readline ${NAMELIBFT} -o ${NAME} -L/usr/local/opt/readline/lib
 
 ${NAMELIBFT}:	$(shell find ${DIRLIBFT} -type f \( -iname \*.c -o -iname \*.h \))
 				cd ${DIRLIBFT} && ${MAKE} bonus && cp -v ${NAMELIBFT} ../${NAMELIBFT}
 
 .c.o:
-			${CC} ${CFLAGS} -c -g -I${DIRINCL} $< -o $@
+			${CC} ${CFLAGS} -c -g -I${DIRINCL} $< -o $@ -I/usr/local/opt/readline/include
 
 clean:
 ifneq ("$(wildcard $(OBJS))", "")

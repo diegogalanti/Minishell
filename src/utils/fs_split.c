@@ -5,97 +5,89 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: digallar <digallar@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/18 13:12:04 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/01/14 10:02:43 by digallar         ###   ########.fr       */
+/*   Created: 2022/12/01 11:34:21 by digallar          #+#    #+#             */
+/*   Updated: 2024/03/26 08:32:56 by digallar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	ft_nb_str(char const *s, char c)
+static int	count_char(char const *s, char c)
 {
-	int	nb;
+	int	i;
+	int	just_found;
+	int	count;
 
-	nb = 0;
-	while (*s != '\0')
+	count = 0;
+	i = 0;
+	just_found = 0;
+	if (s[0] == 0)
+		return (-1);
+	while (s[i])
 	{
-		while (*s == c && *s != '\0')
-			s++;
-		if (*s != '\0')
-			nb++;
-		while (*s != c && *s != '\0')
-			s++;
+		if (s[i] == c)
+		{
+			if (!just_found)
+				count++;
+			just_found = 1;
+		}
+		else
+			just_found = 0;
+		i++;
 	}
-	return (nb);
+	return (count);
 }
 
-static size_t	ft_len_str(char const *s, char c)
+static int	index_of(char const *s, char c)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
-	while (*s != c && *s != '\0')
+	while (s[i])
 	{
-		s++;
+		if (s[i] == c)
+			return (i);
 		i++;
 	}
 	return (i);
 }
 
-/*static char	**ft_malloc_fail(char **arr)
+static char	*get_next(t_data *data, char const *s, char c, int *new_index)
 {
-	int	x;
+	int		index;
+	char	*next;
 
-	x = 0;
-	while (arr[x])
-	{
-		free(arr[x]);
-		arr[x] = NULL;
-		x++;
-	}
-	free(arr);
-	arr = NULL;
-	return (0);
-}*/
-
-static char	**ft_createstr(t_data *data, char const *s, char c,
-	char **arr, int nb)
-{
-	int	x;
-	int	y;
-
-	x = 0;
-	while (x < nb)
-	{
-		y = 0;
-		while (*s == c && *s != '\0')
-			s++;
-		arr[x] = (char *)safe_malloc(data,
-				(sizeof(char) * (ft_len_str(s, c) + 1)));
-		if (!arr[x])
-			return (NULL);
-		while (*s != c && *s != '\0')
-		{
-			arr[x][y++] = *(s++);
-		}
-		arr[x][y] = '\0';
-		x++;
-	}
-	arr[x] = NULL;
-	return (arr);
+	index = index_of(s + *new_index, c);
+	next = safe_malloc(data, (index + 1) * sizeof(*next));
+	if (!next)
+		return (0);
+	next[index] = 0;
+	ft_memcpy(next, s + *new_index, index * sizeof(*next));
+	*new_index += index;
+	while (s[*new_index] == c)
+		*new_index = *new_index + 1;
+	return (next);
 }
 
 char	**fs_split(t_data *data, char const *s, char c)
 {
-	char	**arr;
-	int		nb;
+	int		count;
+	char	**result;
+	int		i;
+	int		new_index;
 
-	if (!s)
+	count = count_char(s, c);
+	result = safe_malloc(data, (count + 2) * sizeof(*result));
+	if (!result)
 		return (0);
-	nb = ft_nb_str(s, c);
-	arr = (char **)safe_malloc(data, (sizeof(s) * (nb + 1)));
-	if (!arr)
-		return (0);
-	ft_createstr(data, s, c, arr, nb);
-	return (arr);
+	result[count + 1] = 0;
+	i = -1;
+	new_index = 0;
+	while (++i < count + 1)
+	{
+		result[i] = get_next(data, s, c, &new_index);
+		if (result[i] == 0)
+			return (0);
+	}
+	return (result);
 }
