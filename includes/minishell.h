@@ -6,13 +6,14 @@
 /*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 12:46:47 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/03/26 16:24:37 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/04/08 11:20:36 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# define _GNU_SOURCE /* for vs code to recognize sigaction struct */
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h> /* readline */
@@ -256,5 +257,8 @@ void			remove_quotes(char *arg);
 int				set_signal(void);
 void			handle_signals(int sig);
 void			reset_g_signal(void);
+
+/* main.c */
+void			non_interactive(int argc, char **argv, t_data *data);
 
 #endif /* MINISHELL_H */

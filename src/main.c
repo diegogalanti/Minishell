@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 17:44:14 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/03/26 14:53:55 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/04/08 11:09:46 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ int	main(int argc, char **argv, char **env)
 	t_data				*data;
 
 	set_signal();
-	if (argc > 1)
-		return (printf("implement non-interactive mode for %s\n", *argv), 0);
 	data = init_data(env);
+	if (argc > 1)
+		non_interactive(argc, argv, data);
 	while (1)
 	{
 		reset_g_signal();
@@ -59,4 +59,25 @@ int	main(int argc, char **argv, char **env)
 		}
 	}
 	return (0);
+}
+
+void	non_interactive(int argc, char **argv, t_data *data)
+{
+	int		i;
+	char	*temp;
+
+	data->user_input = ft_strdup(argv[1]);
+	i = 1;
+	while (++i < argc)
+	{
+		temp = ft_strjoin(data->user_input, " ");
+		if (data->user_input)
+			free(data->user_input);
+		data->user_input = ft_strjoin(temp, argv[i]);
+		if (temp)
+			free(temp);
+	}
+	parse_input(data);
+	execute(data);
+	free_exit(data);
 }

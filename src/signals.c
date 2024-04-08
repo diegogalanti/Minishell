@@ -6,7 +6,7 @@
 /*   By: tstahlhu <tstahlhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 13:11:12 by tstahlhu          #+#    #+#             */
-/*   Updated: 2024/03/26 14:53:59 by tstahlhu         ###   ########.fr       */
+/*   Updated: 2024/04/08 11:26:55 by tstahlhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int	set_signal(void)
 	struct sigaction	sa;
 
 	sa.sa_handler = handle_signals;
+	sa.sa_flags = 0; // valgrind throws error otherwise; check if functions as should
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGQUIT, &sa, NULL);
